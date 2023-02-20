@@ -3,11 +3,9 @@ package cards.base
 import Player
 import cards.TreasureCard
 
-class Gold(override val player: Player) : TreasureCard {
+class Gold(override val owner: Player) : TreasureCard {
     override fun execute() {
-        player.incrementCoins()
-        player.incrementCoins()
-        player.incrementCoins()
+        owner.addCoins(3)
     }
 
     override val cost: Int

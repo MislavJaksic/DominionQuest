@@ -3,15 +3,15 @@ package cards.base
 import Player
 import cards.ActionCard
 
-class Market(override val player: Player): ActionCard {
+class Market(override val owner: Player): ActionCard {
     override val cost: Int
         get() = 5
 
     override fun execute() {
-        player.draw()
-        player.incrementActions()
-        player.incrementBuys()
-        player.incrementCoins()
+        owner.draw(1)
+        owner.addActions(1)
+        owner.addBuys(1)
+        owner.addCoins(1)
     }
 
 }

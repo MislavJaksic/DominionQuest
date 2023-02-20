@@ -3,6 +3,6 @@ package cards
 import Player
 
 interface Card {
-    val player: Player
+    val owner: Player
     val cost: Int
 }
