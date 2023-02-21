@@ -1,4 +1,4 @@
-package cards.base
+package cards.basic
 
 import Player
 import cards.TreasureCard

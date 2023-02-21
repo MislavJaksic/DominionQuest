@@ -1,4 +1,4 @@
-package cards.base
+package cards.vanilla
 
 import Player
 import cards.ActionCard

@@ -1,7 +1,12 @@
 import cards.Card
-import cards.base.TestCard
+import cards.test.TestActionCard
+import cards.test.TestTreasureCard
+import cards.test.TestVictoryCard
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import phases.ActionPhase
+import phases.BuyPhase
 
 class PlayerTest {
 
@@ -12,12 +17,73 @@ class PlayerTest {
 
     val player = Player(0, 0, 0, emptyHand, emptyDrawPile, emptyDiscardPile, emptyPlayArea)
 
-    val testCardZero = TestCard(player, 0)
-    val testCardOne = TestCard(player, 1)
+    val testActionCardZero = TestActionCard(player, 0)
+    val testActionCardOne = TestActionCard(player, 1)
+    val testTreasureCardZero = TestTreasureCard(player, 0)
+    val testVictoryCardZero = TestVictoryCard(player, 0,0)
 
-    @Test
-    fun play() {
+    @Nested
+    inner class Play {
+        @Test
+        fun `play action in action phase`() {
+            player.addActions(1)
+            player.putInHand(testActionCardZero)
+            player.play(testActionCardZero)
+
+            assertEquals(true, player.hand.isEmpty())
+            assertEquals(testActionCardZero, player.playArea[0])
+        }
+
+        @Test
+        fun `play treasure in action phase`() {
+            player.putInHand(testTreasureCardZero)
+            player.play(testTreasureCardZero)
+
+            assertEquals(testTreasureCardZero, player.hand[0])
+            assertEquals(true, player.playArea.isEmpty())
+        }
+
+        @Test
+        fun `play victory in action phase`() {
+            player.putInHand(testVictoryCardZero)
+            player.play(testVictoryCardZero)
+
+            assertEquals(testVictoryCardZero, player.hand[0])
+            assertEquals(true, player.playArea.isEmpty())
+        }
+
+        @Test
+        fun `play action in buy phase`() {
+            player.phase = BuyPhase(player)
+            player.addActions(1)
+            player.putInHand(testActionCardZero)
+            player.play(testActionCardZero)
+
+            assertEquals(testActionCardZero, player.hand[0])
+            assertEquals(true, player.playArea.isEmpty())
+        }
+
+        @Test
+        fun `play treasure in buy phase`() {
+            player.phase = BuyPhase(player)
+            player.putInHand(testTreasureCardZero)
+            player.play(testTreasureCardZero)
+
+            assertEquals(true, player.hand.isEmpty())
+            assertEquals(testTreasureCardZero, player.playArea[0])
+        }
+
+        @Test
+        fun `play victory in buy phase`() {
+            player.phase = BuyPhase(player)
+            player.putInHand(testVictoryCardZero)
+            player.play(testVictoryCardZero)
+
+            assertEquals(testVictoryCardZero, player.hand[0])
+            assertEquals(true, player.playArea.isEmpty())
+        }
     }
+
 
     @Test
     fun addActions() {
@@ -42,73 +108,96 @@ class PlayerTest {
 
     @Test
     fun gain() {
-        player.gainToDiscard(testCardZero)
-        player.gainToDiscard(testCardOne)
-        assertEquals(testCardOne, player.revealTopOfDiscard())
+        player.gain(testActionCardZero)
+        player.gain(testActionCardOne)
+        assertEquals(testActionCardOne, player.revealDiscard())
     }
 
     @Test
     fun buy() {
-        player.buy(testCardZero)
-        player.buy(testCardOne)
-        assertEquals(testCardOne, player.revealTopOfDiscard())
+        player.buy(testActionCardZero)
+        player.buy(testActionCardOne)
+        assertEquals(testActionCardOne, player.revealDiscard())
         assertEquals(-2, player.buys)
     }
 
     @Test
-    fun putOnTopOfDraw() {
-        player.putOnTopOfDraw(testCardZero)
-        player.putOnTopOfDraw(testCardOne)
+    fun putOnDraw() {
+        player.putOnDraw(testActionCardZero)
+        player.putOnDraw(testActionCardOne)
         player.draw(1)
-        assertEquals(testCardZero, player.hand[0])
+
+        assertEquals(testActionCardZero, player.drawPile[0])
+        assertEquals(testActionCardOne, player.hand[0])
     }
+    @Nested
+    inner class Draw {
+        @Test
+        fun `draw when both piles are empty`() {
+            player.draw(1)
 
-    @Test
-    fun drawBothPilesEmpty() {
-        player.draw(1)
-        assertEquals(emptyHand, player.hand)
-        assertEquals(emptyDiscardPile, player.discardPile)
-        assertEquals(emptyDrawPile, player.drawPile)
+            assertEquals(emptyHand, player.hand)
+            assertEquals(emptyDiscardPile, player.discardPile)
+            assertEquals(emptyDrawPile, player.drawPile)
+        }
+
+        @Test
+        fun drawDrawPileEmpty() {
+            player.gain(testActionCardZero)
+            player.draw(1)
+
+            assertEquals(testActionCardZero, player.hand[0])
+            assertEquals(emptyDiscardPile, player.discardPile)
+            assertEquals(emptyDrawPile, player.drawPile)
+        }
+
+        @Test
+        fun drawThenShuffleThenDrawAgain() {
+            player.putOnDraw(testActionCardZero)
+            player.gain(testActionCardOne)
+            player.draw(2)
+
+            assertEquals(testActionCardZero, player.hand[0])
+            assertEquals(testActionCardOne, player.hand[1])
+            assertEquals(emptyDiscardPile, player.discardPile)
+            assertEquals(emptyDrawPile, player.drawPile)
+        }
     }
-
-    @Test
-    fun drawDrawPileEmpty() {
-        player.gainToDiscard(testCardZero)
-        player.draw(1)
-        assertEquals(testCardZero, player.hand[0])
-        assertEquals(emptyDiscardPile, player.discardPile)
-        assertEquals(emptyDrawPile, player.drawPile)
-    }
-
-    @Test
-    fun drawThenShuffleThenDrawAgain() {
-        player.putOnTopOfDraw(testCardZero)
-        player.gainToDiscard(testCardOne)
-        player.draw(2)
-        assertEquals(testCardZero, player.hand[0])
-        assertEquals(testCardOne, player.hand[1])
-        assertEquals(emptyDiscardPile, player.discardPile)
-        assertEquals(emptyDrawPile, player.drawPile)
-    }
-
-
 
     @Test
     fun shuffleDeck() {
-        player.gainToDiscard(testCardZero)
+        player.gain(testActionCardZero)
+
         player.shuffleDeck()
-        assertEquals(testCardZero, player.drawPile[0])
+        assertEquals(testActionCardZero, player.drawPile[0])
     }
 
-    @Test
-    fun arrayToString() {
+    @Nested
+    inner class Cleanup {
+        @Test
+        fun `cleanup actions, coins, buys`() {
+            player.cleanup()
+            assertEquals(1, player.buys)
+            assertEquals(1, player.actions)
+            assertEquals(0, player.coins)
+        }
+        @Test
+        fun `cleanup played cards`() {
+            player.putInHand(testActionCardZero)
+            player.addActions(1)
+            player.play(testActionCardZero)
+
+            player.cleanup()
+            assertEquals(testActionCardZero, player.hand[0])
+        }
+
+        @Test
+        fun `cleanup cards in hand`() {
+            player.putInHand(testActionCardZero)
+
+            player.cleanup()
+            assertEquals(testActionCardZero, player.hand[0])
+        }
     }
-
-    @Test
-    fun testToString() {
-    }
-
-
-
 
 }

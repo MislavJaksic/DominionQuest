@@ -1,6 +1,8 @@
 import cards.ActionCard
 import cards.Card
 import cards.TreasureCard
+import phases.ActionPhase
+import phases.Phase
 
 class Player(
     var actions: Int,
@@ -11,25 +13,7 @@ class Player(
     var discardPile: ArrayList<Card>,
     val playArea: ArrayList<Card>
 ) {
-
-    fun play(card:Card) {
-        when (card) {
-            is TreasureCard -> {
-                hand.remove(card)
-                playArea.add(card)
-                card.execute()
-            }
-            is ActionCard -> {
-                addActions(-1)
-                hand.remove(card)
-                playArea.add(card)
-                card.execute()
-            }
-            else -> {
-                println("Card $card cannot be played.")
-            }
-        }
-    }
+    var phase: Phase = ActionPhase(this)
 
     fun addActions(amount: Int) {
         actions += amount
@@ -43,17 +27,29 @@ class Player(
         coins += amount
     }
 
-    fun gainToDiscard(card: Card) {
+    fun gain(card: Card) {
         discardPile.add(card)
+    }
+
+    fun putInHand(card: Card) {
+        hand.add(card)
     }
 
     fun buy(card: Card) {
         addBuys(-1)
-        gainToDiscard(card)
+        gain(card)
     }
 
-    fun putOnTopOfDraw(card:Card) {
+    fun putOnDraw(card:Card) {
         drawPile.add(card)
+    }
+
+    fun revealDiscard(): Card {
+        return discardPile.last()
+    }
+
+    fun play(card: Card) {
+        phase.play(card)
     }
 
     fun draw(amount: Int) {
@@ -67,13 +63,22 @@ class Player(
         }
     }
 
-    fun revealTopOfDiscard(): Card {
-        return discardPile.last()
-    }
-
     fun shuffleDeck() {
         drawPile = discardPile.also { discardPile = drawPile }
         drawPile.shuffle()
+    }
+
+    fun cleanup() {
+        while (playArea.isNotEmpty()) {
+            discardPile.add(playArea.removeLast())
+        }
+        while (hand.isNotEmpty()) {
+            discardPile.add(hand.removeLast())
+        }
+        draw(5)
+        actions = 1
+        buys = 1
+        coins = 0
     }
 
     fun arrayToString(array: ArrayList<Card>): String {

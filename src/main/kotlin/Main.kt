@@ -3,7 +3,7 @@ import com.github.ajalt.clikt.core.UsageError
 
 
 
-fun main(args: Array<String>) = Game().main(args)
+fun main(args: Array<String>) = CliController().main(args)
 
 /*fun main(args: Array<String>) {
     println("Hello World!")
