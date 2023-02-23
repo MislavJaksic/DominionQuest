@@ -2,9 +2,11 @@ import cards.ActionCard
 import cards.Card
 import cards.TreasureCard
 import phases.ActionPhase
+import phases.BuyPhase
 import phases.Phase
 
 class Player(
+    val name: String,
     var actions: Int,
     var buys: Int,
     var coins: Int,
@@ -31,13 +33,13 @@ class Player(
         discardPile.add(card)
     }
 
-    fun putInHand(card: Card) {
-        hand.add(card)
-    }
-
     fun buy(card: Card) {
         addBuys(-1)
         gain(card)
+    }
+
+    fun putInHand(card: Card) {
+        hand.add(card)
     }
 
     fun putOnDraw(card:Card) {
@@ -79,24 +81,5 @@ class Player(
         actions = 1
         buys = 1
         coins = 0
-    }
-
-    fun arrayToString(array: ArrayList<Card>): String {
-        var string = ""
-        for(item in array){
-            string += "\n    "
-            string += item.toString()
-        }
-        return string
-    }
-
-    override fun toString(): String {
-        return """Player(
-actions=$actions
-buys=$buys
-coins=$coins
-hand=${arrayToString(hand)}
-playArea=${arrayToString(playArea)}
-)"""
     }
 }

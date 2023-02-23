@@ -14,9 +14,6 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("com.github.ajalt.clikt:clikt:3.5.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
 }
 
 tasks.test {

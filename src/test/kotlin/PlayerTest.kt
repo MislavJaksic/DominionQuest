@@ -2,6 +2,7 @@ import cards.Card
 import cards.test.TestActionCard
 import cards.test.TestTreasureCard
 import cards.test.TestVictoryCard
+import controllers.CliController
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,7 +16,13 @@ class PlayerTest {
     val emptyDiscardPile: ArrayList<Card> = ArrayList()
     val emptyPlayArea: ArrayList<Card> = ArrayList()
 
-    val player = Player(0, 0, 0, emptyHand, emptyDrawPile, emptyDiscardPile, emptyPlayArea)
+    val player = Player("test",0, 0, 0, emptyHand, emptyDrawPile, emptyDiscardPile, emptyPlayArea)
+
+    val players: ArrayList<Player> = ArrayList()
+
+    val controller = CliController()
+
+    val game = Game(players, controller)
 
     val testActionCardZero = TestActionCard(player, 0)
     val testActionCardOne = TestActionCard(player, 1)
@@ -199,5 +206,4 @@ class PlayerTest {
             assertEquals(testActionCardZero, player.hand[0])
         }
     }
-
 }

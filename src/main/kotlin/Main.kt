@@ -1,6 +1,4 @@
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
-
+import controllers.CliController
 
 
 fun main(args: Array<String>) = CliController().main(args)
