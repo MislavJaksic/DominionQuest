@@ -1,5 +1,5 @@
 package cards
 
-interface VictoryCard: Card {
+interface VictoryCard : Card {
     val points: Int
 }

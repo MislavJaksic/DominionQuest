@@ -12,8 +12,8 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 
 
-class CliController: CliktCommand(), Controller {
-    val playerCount by option(help="Number of players").int().default(1)
+class CliController : CliktCommand(), Controller {
+    val playerCount by option(help = "Number of players").int().default(1)
 
     override fun run() {
         val players: ArrayList<Player> = ArrayList()
@@ -34,33 +34,48 @@ class CliController: CliktCommand(), Controller {
         val game = Game(players, this)
         game.start()
     }
-    override fun getInputFrom(player: Player):Int {
+
+    override fun getInputFrom(player: Player): Int {
         while (true) {
             printStateOf(player)
             val inputValue = prompt("What do you do?") {
                 it.toIntOrNull() ?: throw UsageError("$it is not a valid integer")
             }
 
-            if (inputValue != null && inputValue in -1 .. player.hand.size) {
+            if (inputValue != null && inputValue in -1..player.hand.size) {
                 return inputValue
             }
         }
     }
 
-    fun printStateOf(player:Player) {
-        println("""Player(
-actions=${player.actions}
-buys=${player.buys}
-coins=${player.coins}
-hand=${arrayToString(player.hand)}
-playArea=${arrayToString(player.playArea)}
-)""")
+    fun printStateOf(player: Player) {
+        println(
+            """=== Player ${player.name}::${player.phase::class.java.simpleName} ===
+actions  buys  coins
+=${player.actions}       =${player.buys}    =${player.coins}
+playArea=${arrayToFlatString(player.playArea)}
+hand=${arrayToCommandString(player.hand)}
+commands= -1 -> exit, 0 -> next phase
+=== ==="""
+        )
     }
-    fun arrayToString(array: ArrayList<Card>): String {
+
+    fun arrayToFlatString(array: ArrayList<Card>): String {
         var string = ""
-        for(item in array){
-            string += "\n    "
-            string += item.toString()
+        for (item in array) {
+            string += ", "
+            string += item::class.simpleName
+        }
+        return string
+    }
+
+    fun arrayToCommandString(array: ArrayList<Card>): String {
+        var string = ""
+        var count = 1
+        for (item in array) {
+            string += ", $count -> "
+            string += item::class.simpleName
+            count++
         }
         return string
     }
