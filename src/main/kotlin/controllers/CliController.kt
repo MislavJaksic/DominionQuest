@@ -6,10 +6,13 @@ import cards.Card
 import cards.basic.Copper
 import cards.basic.Estate
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.UsageError
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
+import commands.Command
+import commands.NextPhase
+import commands.PlayCard
+import commands.Surrender
 
 
 class CliController : CliktCommand(), Controller {
@@ -35,16 +38,22 @@ class CliController : CliktCommand(), Controller {
         game.start()
     }
 
-    override fun getInputFrom(player: Player): Int {
+    override fun getCommandFrom(player: Player): Command {
         while (true) {
             printStateOf(player)
-            val inputValue = prompt("What do you do?") {
-                it.toIntOrNull() ?: throw UsageError("$it is not a valid integer")
-            }
+            val input = prompt("What do you do?")
 
-            if (inputValue != null && inputValue in -1..player.hand.size) {
-                return inputValue
-            }
+            val command = input?.let { inputToPlayerCommand(it, player) }
+            command?.let { return command }
+        }
+    }
+
+    fun inputToPlayerCommand(input: String, player: Player): Command? {
+        return when (input) {
+            ("-1") -> Surrender()
+            ("0") -> NextPhase(player, isTurnEnd = false)
+            in (1..player.hand.size).toString() -> PlayCard(player, player.hand[input.toInt() - 1])
+            else -> null
         }
     }
 
@@ -59,6 +68,18 @@ commands= -1 -> exit, 0 -> next phase
 === ==="""
         )
     }
+
+    /*fun printStateOf(kingdom: Kingdom) {
+        println(
+            """=== Player ${player.name}::${player.phase::class.java.simpleName} ===
+actions  buys  coins
+=${player.actions}       =${player.buys}    =${player.coins}
+playArea=${arrayToFlatString(player.playArea)}
+hand=${arrayToCommandString(player.hand)}
+commands= -1 -> exit, 0 -> next phase
+=== ==="""
+        )
+    }*/
 
     fun arrayToFlatString(array: ArrayList<Card>): String {
         var string = ""

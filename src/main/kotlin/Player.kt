@@ -8,8 +8,8 @@ class Player(
     var buys: Int,
     var coins: Int,
     val hand: ArrayList<Card>,
-    var drawPile: ArrayList<Card>,
-    var discardPile: ArrayList<Card>,
+    val drawPile: ArrayList<Card>,
+    val discardPile: ArrayList<Card>,
     val playArea: ArrayList<Card>
 ) {
     var phase: Phase = ActionPhase(this)
@@ -31,8 +31,11 @@ class Player(
     }
 
     fun buy(card: Card) {
-        addBuys(-1)
-        gain(card)
+        if (buys > 0 && (coins - card.cost) > -1) {
+            addBuys(-1)
+            addCoins(-card.cost)
+            gain(card)
+        }
     }
 
     fun putInHand(card: Card) {
@@ -63,7 +66,8 @@ class Player(
     }
 
     fun shuffleDeck() {
-        drawPile = discardPile.also { discardPile = drawPile }
+        drawPile.addAll(discardPile)
+        discardPile.removeAll(discardPile.toSet())
         drawPile.shuffle()
     }
 

@@ -18,11 +18,21 @@ class DataSource {
     }
 
     fun getPlayTestData(
-        player: Player,
+        player: Player = getPlayer(),
         playCard: Card,
-        expectedHand: ArrayList<Card>,
-        expectedPlayArea: ArrayList<Card>
+        expectedHand: ArrayList<Card> = ArrayList(),
+        expectedPlayArea: ArrayList<Card> = ArrayList()
     ): PlayTestData {
         return PlayTestData(player, playCard, expectedHand, expectedPlayArea)
+    }
+
+    fun getBuyTestData(
+        player: Player = getPlayer(),
+        buyCard: Card,
+        expectedDiscard: ArrayList<Card> = ArrayList(),
+        expectedCoins: Int = 0,
+        expectedBuys: Int = 0
+    ): BuyTestData {
+        return BuyTestData(player, buyCard, expectedDiscard, expectedCoins, expectedBuys)
     }
 }

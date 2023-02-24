@@ -2,6 +2,7 @@ import cards.Card
 import cards.test.TestActionCard
 import cards.test.TestTreasureCard
 import cards.test.TestVictoryCard
+import helpers.BuyTestData
 import helpers.DataSource
 import helpers.PlayTestData
 import org.assertj.core.api.Assertions.assertThat
@@ -34,33 +35,26 @@ class PlayerTest {
                 named(
                     "play action without actions in action phase",
                     dataSource.getPlayTestData(
-                        player = dataSource.getPlayer(),
                         playCard = actionCardZero,
-                        expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                        expectedPlayArea = ArrayList<Card>()
+                        expectedHand = ArrayList<Card>().apply { add(actionCardZero) }
                     )
                 )
             ),
             arguments(dataSource.getPlayTestData(
                 player = dataSource.getPlayer(actions = 1),
                 playCard = actionCardZero,
-                expectedHand = ArrayList<Card>(),
                 expectedPlayArea = ArrayList<Card>().apply { add(actionCardZero) }
             )),
             arguments(
                 dataSource.getPlayTestData(
-                    player = dataSource.getPlayer(),
                     playCard = treasureCardZero,
                     expectedHand = ArrayList<Card>().apply { add(treasureCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(
                 dataSource.getPlayTestData(
-                    player = dataSource.getPlayer(),
                     playCard = victoryCardZero,
                     expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(
@@ -68,7 +62,6 @@ class PlayerTest {
                     player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
                     playCard = actionCardZero,
                     expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(
@@ -76,13 +69,11 @@ class PlayerTest {
                     player = dataSource.getPlayer(actions = 1).apply { this.phase = BuyPhase(this) },
                     playCard = actionCardZero,
                     expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(dataSource.getPlayTestData(
                 player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
                 playCard = treasureCardZero,
-                expectedHand = ArrayList<Card>(),
                 expectedPlayArea = ArrayList<Card>().apply { add(treasureCardZero) }
             )),
             arguments(
@@ -90,7 +81,6 @@ class PlayerTest {
                     player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
                     playCard = victoryCardZero,
                     expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             )
         )
@@ -136,13 +126,63 @@ class PlayerTest {
         assertEquals(actionCardOne, player.revealDiscard())
     }
 
-    @Test
-    fun buy() {
-        player.buy(actionCardZero)
-        player.buy(actionCardOne)
-        assertEquals(actionCardOne, player.revealDiscard())
-        assertEquals(-2, player.buys)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @Nested
+    inner class Buy {
+        fun buyTestDataProvider() = Stream.of(
+            arguments(
+                named(
+                    "not enough buys or coins",
+                    dataSource.getBuyTestData(
+                        buyCard = actionCardZero
+                    )
+                )
+            ),
+            arguments(
+                named(
+                    "enough buys but not coins",
+                    dataSource.getBuyTestData(
+                        player = dataSource.getPlayer(buys = 1),
+                        buyCard = actionCardOne,
+                        expectedBuys = 1
+                    )
+                )
+            ),
+            arguments(
+                named(
+                    "enough coins but buys",
+                    dataSource.getBuyTestData(
+                        player = dataSource.getPlayer(coins = 1),
+                        buyCard = actionCardOne,
+                        expectedCoins = 1
+                    )
+                )
+            ),
+            arguments(
+                named(
+                    "enough coins and buys",
+                    dataSource.getBuyTestData(
+                        player = dataSource.getPlayer(buys = 1, coins = 1),
+                        buyCard = actionCardOne,
+                        expectedDiscard = ArrayList<Card>().apply { add(actionCardOne) }
+                    )
+                )
+            )
+        )
+
+        @ParameterizedTest
+        @MethodSource("buyTestDataProvider")
+        fun playActionPhase(buyTestData: BuyTestData) {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = buyTestData
+            player.buy(card)
+
+            assertThat(player.discardPile).isEqualTo(expectedDiscard)
+            assertThat(player.coins).isEqualTo(expectedCoins)
+            assertThat(player.buys).isEqualTo(expectedBuys)
+        }
+
     }
+
 
     @Test
     fun putOnDraw() {

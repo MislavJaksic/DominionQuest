@@ -1,7 +1,8 @@
 package controllers
 
 import Player
+import commands.Command
 
 interface Controller {
-    fun getInputFrom(player: Player): Int
+    fun getCommandFrom(player: Player): Command
 }
