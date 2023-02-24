@@ -1,8 +1,5 @@
-import cards.ActionCard
 import cards.Card
-import cards.TreasureCard
 import phases.ActionPhase
-import phases.BuyPhase
 import phases.Phase
 
 class Player(
@@ -42,7 +39,7 @@ class Player(
         hand.add(card)
     }
 
-    fun putOnDraw(card:Card) {
+    fun putOnDraw(card: Card) {
         drawPile.add(card)
     }
 

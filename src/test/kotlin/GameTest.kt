@@ -1,38 +1,51 @@
-import cards.Card
 import controllers.CliController
+import helpers.DataSource
+import io.mockk.every
+import io.mockk.mockk
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Nested
-
 class GameTest {
-    val emptyHand: ArrayList<Card> = ArrayList()
-    val emptyDrawPile: ArrayList<Card> = ArrayList()
-    val emptyDiscardPile: ArrayList<Card> = ArrayList()
-    val emptyPlayArea: ArrayList<Card> = ArrayList()
+    val dataSource = DataSource()
 
-    val player = Player("test",0, 0, 0, emptyHand, emptyDrawPile, emptyDiscardPile, emptyPlayArea)
+    val player = dataSource.getPlayer()
 
     val playersZero: ArrayList<Player> = ArrayList()
     val playersOne: ArrayList<Player> = ArrayList<Player>().apply { this.add(player) }
 
-    val controller = CliController()
+    val controllerMock: CliController = mockk()
 
-    val gameZero = Game(playersZero, controller)
-    val gameOne = Game(playersOne, controller)
+    val gameZero = Game(playersZero, controllerMock)
+    val gameOne = Game(playersOne, controllerMock)
 
     @Nested
     inner class Start {
         @Test
         fun `zero players`() {
-            gameZero.start()
+            assertThatThrownBy { gameZero.start() }.hasMessage("No players")
+        }
+
+        @Test
+        fun `one player exits`() {
+            every { controllerMock.getInputFrom(player) } returns -1
+            assertThatThrownBy { gameOne.start() }.hasMessage("Surrender")
         }
     }
 
+    @Nested
+    inner class TakeTurn {
+        @Test
+        fun surrender() {
+            every { controllerMock.getInputFrom(player) } returns -1
+            assertThatThrownBy { gameOne.takeTurn(player) }.hasMessage("Surrender")
+        }
 
-    @Test
-    fun takeTurn() {
-        TODO("Mock and initialize variables")
+        @Test
+        fun `pass action and buy phases`() {
+            every { controllerMock.getInputFrom(player) } returns 0
+            assertThat(gameOne.takeTurn(player)).isEqualTo(0)
+        }
     }
-
 }

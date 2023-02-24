@@ -1,5 +1,5 @@
 package cards
 
-interface TreasureCard:Card {
+interface TreasureCard : Card {
     fun execute()
 }

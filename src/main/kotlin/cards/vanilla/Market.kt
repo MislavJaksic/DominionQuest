@@ -3,7 +3,7 @@ package cards.vanilla
 import Player
 import cards.ActionCard
 
-class Market(override val owner: Player): ActionCard {
+class Market(override val owner: Player) : ActionCard {
     override val cost: Int
         get() = 5
 

@@ -2,92 +2,108 @@ import cards.Card
 import cards.test.TestActionCard
 import cards.test.TestTreasureCard
 import cards.test.TestVictoryCard
-import controllers.CliController
-import org.junit.jupiter.api.Assertions.assertEquals
+import helpers.DataSource
+import helpers.PlayTestData
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import phases.ActionPhase
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments.arguments
+import org.junit.jupiter.params.provider.MethodSource
 import phases.BuyPhase
+import java.util.stream.Stream
 
 class PlayerTest {
+    val dataSource = DataSource()
 
-    val emptyHand: ArrayList<Card> = ArrayList()
-    val emptyDrawPile: ArrayList<Card> = ArrayList()
-    val emptyDiscardPile: ArrayList<Card> = ArrayList()
-    val emptyPlayArea: ArrayList<Card> = ArrayList()
+    val player = dataSource.getPlayer()
 
-    val player = Player("test",0, 0, 0, emptyHand, emptyDrawPile, emptyDiscardPile, emptyPlayArea)
+    val actionCardZero = TestActionCard(player, 0)
+    val actionCardOne = TestActionCard(player, 1)
+    val treasureCardZero = TestTreasureCard(player, 0)
+    val victoryCardZero = TestVictoryCard(player, 0, 0)
 
-    val players: ArrayList<Player> = ArrayList()
-
-    val controller = CliController()
-
-    val game = Game(players, controller)
-
-    val testActionCardZero = TestActionCard(player, 0)
-    val testActionCardOne = TestActionCard(player, 1)
-    val testTreasureCardZero = TestTreasureCard(player, 0)
-    val testVictoryCardZero = TestVictoryCard(player, 0,0)
-
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
-    inner class Play {
-        @Test
-        fun `play action in action phase`() {
-            player.addActions(1)
-            player.putInHand(testActionCardZero)
-            player.play(testActionCardZero)
+    inner class Play { /* code was not shortened with parameterized tests */
+        fun playTestDataProvider() = Stream.of(
+            arguments(
+                named(
+                    "play action without actions in action phase",
+                    dataSource.getPlayTestData(
+                        player = dataSource.getPlayer(),
+                        playCard = actionCardZero,
+                        expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
+                        expectedPlayArea = ArrayList<Card>()
+                    )
+                )
+            ),
+            arguments(dataSource.getPlayTestData(
+                player = dataSource.getPlayer(actions = 1),
+                playCard = actionCardZero,
+                expectedHand = ArrayList<Card>(),
+                expectedPlayArea = ArrayList<Card>().apply { add(actionCardZero) }
+            )),
+            arguments(
+                dataSource.getPlayTestData(
+                    player = dataSource.getPlayer(),
+                    playCard = treasureCardZero,
+                    expectedHand = ArrayList<Card>().apply { add(treasureCardZero) },
+                    expectedPlayArea = ArrayList<Card>()
+                )
+            ),
+            arguments(
+                dataSource.getPlayTestData(
+                    player = dataSource.getPlayer(),
+                    playCard = victoryCardZero,
+                    expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
+                    expectedPlayArea = ArrayList<Card>()
+                )
+            ),
+            arguments(
+                dataSource.getPlayTestData(
+                    player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
+                    playCard = actionCardZero,
+                    expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
+                    expectedPlayArea = ArrayList<Card>()
+                )
+            ),
+            arguments(
+                dataSource.getPlayTestData(
+                    player = dataSource.getPlayer(actions = 1).apply { this.phase = BuyPhase(this) },
+                    playCard = actionCardZero,
+                    expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
+                    expectedPlayArea = ArrayList<Card>()
+                )
+            ),
+            arguments(dataSource.getPlayTestData(
+                player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
+                playCard = treasureCardZero,
+                expectedHand = ArrayList<Card>(),
+                expectedPlayArea = ArrayList<Card>().apply { add(treasureCardZero) }
+            )),
+            arguments(
+                dataSource.getPlayTestData(
+                    player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
+                    playCard = victoryCardZero,
+                    expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
+                    expectedPlayArea = ArrayList<Card>()
+                )
+            )
+        )
 
-            assertEquals(true, player.hand.isEmpty())
-            assertEquals(testActionCardZero, player.playArea[0])
-        }
+        @ParameterizedTest
+        @MethodSource("playTestDataProvider")
+        fun playActionPhase(playTestData: PlayTestData) {
+            val (player, card, expectedHand, expectedPlayArea) = playTestData
+            player.putInHand(card)
+            player.play(card)
 
-        @Test
-        fun `play treasure in action phase`() {
-            player.putInHand(testTreasureCardZero)
-            player.play(testTreasureCardZero)
-
-            assertEquals(testTreasureCardZero, player.hand[0])
-            assertEquals(true, player.playArea.isEmpty())
-        }
-
-        @Test
-        fun `play victory in action phase`() {
-            player.putInHand(testVictoryCardZero)
-            player.play(testVictoryCardZero)
-
-            assertEquals(testVictoryCardZero, player.hand[0])
-            assertEquals(true, player.playArea.isEmpty())
-        }
-
-        @Test
-        fun `play action in buy phase`() {
-            player.phase = BuyPhase(player)
-            player.addActions(1)
-            player.putInHand(testActionCardZero)
-            player.play(testActionCardZero)
-
-            assertEquals(testActionCardZero, player.hand[0])
-            assertEquals(true, player.playArea.isEmpty())
-        }
-
-        @Test
-        fun `play treasure in buy phase`() {
-            player.phase = BuyPhase(player)
-            player.putInHand(testTreasureCardZero)
-            player.play(testTreasureCardZero)
-
-            assertEquals(true, player.hand.isEmpty())
-            assertEquals(testTreasureCardZero, player.playArea[0])
-        }
-
-        @Test
-        fun `play victory in buy phase`() {
-            player.phase = BuyPhase(player)
-            player.putInHand(testVictoryCardZero)
-            player.play(testVictoryCardZero)
-
-            assertEquals(testVictoryCardZero, player.hand[0])
-            assertEquals(true, player.playArea.isEmpty())
+            assertThat(player.hand).isEqualTo(expectedHand)
+            assertThat(player.playArea).isEqualTo(expectedPlayArea)
         }
     }
 
@@ -115,68 +131,69 @@ class PlayerTest {
 
     @Test
     fun gain() {
-        player.gain(testActionCardZero)
-        player.gain(testActionCardOne)
-        assertEquals(testActionCardOne, player.revealDiscard())
+        player.gain(actionCardZero)
+        player.gain(actionCardOne)
+        assertEquals(actionCardOne, player.revealDiscard())
     }
 
     @Test
     fun buy() {
-        player.buy(testActionCardZero)
-        player.buy(testActionCardOne)
-        assertEquals(testActionCardOne, player.revealDiscard())
+        player.buy(actionCardZero)
+        player.buy(actionCardOne)
+        assertEquals(actionCardOne, player.revealDiscard())
         assertEquals(-2, player.buys)
     }
 
     @Test
     fun putOnDraw() {
-        player.putOnDraw(testActionCardZero)
-        player.putOnDraw(testActionCardOne)
+        player.putOnDraw(actionCardZero)
+        player.putOnDraw(actionCardOne)
         player.draw(1)
 
-        assertEquals(testActionCardZero, player.drawPile[0])
-        assertEquals(testActionCardOne, player.hand[0])
+        assertEquals(actionCardZero, player.drawPile[0])
+        assertEquals(actionCardOne, player.hand[0])
     }
+
     @Nested
     inner class Draw {
         @Test
         fun `draw when both piles are empty`() {
             player.draw(1)
 
-            assertEquals(emptyHand, player.hand)
-            assertEquals(emptyDiscardPile, player.discardPile)
-            assertEquals(emptyDrawPile, player.drawPile)
+            assertTrue(player.hand.isEmpty())
+            assertTrue(player.discardPile.isEmpty())
+            assertTrue(player.drawPile.isEmpty())
         }
 
         @Test
         fun drawDrawPileEmpty() {
-            player.gain(testActionCardZero)
+            player.gain(actionCardZero)
             player.draw(1)
 
-            assertEquals(testActionCardZero, player.hand[0])
-            assertEquals(emptyDiscardPile, player.discardPile)
-            assertEquals(emptyDrawPile, player.drawPile)
+            assertEquals(actionCardZero, player.hand[0])
+            assertTrue(player.discardPile.isEmpty())
+            assertTrue(player.drawPile.isEmpty())
         }
 
         @Test
         fun drawThenShuffleThenDrawAgain() {
-            player.putOnDraw(testActionCardZero)
-            player.gain(testActionCardOne)
+            player.putOnDraw(actionCardZero)
+            player.gain(actionCardOne)
             player.draw(2)
 
-            assertEquals(testActionCardZero, player.hand[0])
-            assertEquals(testActionCardOne, player.hand[1])
-            assertEquals(emptyDiscardPile, player.discardPile)
-            assertEquals(emptyDrawPile, player.drawPile)
+            assertEquals(actionCardZero, player.hand[0])
+            assertEquals(actionCardOne, player.hand[1])
+            assertTrue(player.discardPile.isEmpty())
+            assertTrue(player.drawPile.isEmpty())
         }
     }
 
     @Test
     fun shuffleDeck() {
-        player.gain(testActionCardZero)
+        player.gain(actionCardZero)
 
         player.shuffleDeck()
-        assertEquals(testActionCardZero, player.drawPile[0])
+        assertEquals(actionCardZero, player.drawPile[0])
     }
 
     @Nested
@@ -188,22 +205,23 @@ class PlayerTest {
             assertEquals(1, player.actions)
             assertEquals(0, player.coins)
         }
+
         @Test
         fun `cleanup played cards`() {
-            player.putInHand(testActionCardZero)
+            player.putInHand(actionCardZero)
             player.addActions(1)
-            player.play(testActionCardZero)
+            player.play(actionCardZero)
 
             player.cleanup()
-            assertEquals(testActionCardZero, player.hand[0])
+            assertEquals(actionCardZero, player.hand[0])
         }
 
         @Test
         fun `cleanup cards in hand`() {
-            player.putInHand(testActionCardZero)
+            player.putInHand(actionCardZero)
 
             player.cleanup()
-            assertEquals(testActionCardZero, player.hand[0])
+            assertEquals(actionCardZero, player.hand[0])
         }
     }
 }

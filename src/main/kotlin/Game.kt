@@ -1,36 +1,35 @@
 import controllers.Controller
 import phases.ActionPhase
 import phases.BuyPhase
-import kotlin.system.exitProcess
 
 class Game(val players: ArrayList<Player>, val controller: Controller) {
     fun start() {
-        if (players.isNotEmpty()) {
-            while (true) {
-                for (player in players) {
-                    takeTurn(player)
-                }
+        if (players.isEmpty()) {
+            throw Exception("No players")
+        }
+        while (true) {
+            for (player in players) {
+                takeTurn(player)
             }
         }
     }
 
-    fun takeTurn(player: Player) {
+    fun takeTurn(player: Player): Int {
         while (true) {
-            val input: Int = controller.getInputFrom(player)
+            when (val input: Int = controller.getInputFrom(player)) {
+                (-1) -> throw Exception("Surrender")
 
-            when (input) {
-                (-1) -> {
-                    exitProcess(0)
-                }
                 (0) -> {
                     if (player.phase is ActionPhase) {
                         player.phase = BuyPhase(player)
                     } else if (player.phase is BuyPhase) {
                         player.phase = ActionPhase(player)
                         player.cleanup()
-                        break
+                        return 0
                     }
-                } else -> {
+                }
+
+                else -> {
                     player.play(player.hand[input - 1])
                 }
             }

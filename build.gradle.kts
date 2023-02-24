@@ -14,6 +14,8 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("com.github.ajalt.clikt:clikt:3.5.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.assertj:assertj-core:3.24.2")
+    testImplementation("io.mockk:mockk:1.13.4")
 }
 
 tasks.test {
