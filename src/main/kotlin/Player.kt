@@ -83,4 +83,8 @@ class Player(
         buys = 1
         coins = 0
     }
+
+    override fun toString(): String {
+        return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins, hand=$hand, drawPile=$drawPile, discardPile=$discardPile, playArea=$playArea, phase=$phase)"
+    }
 }

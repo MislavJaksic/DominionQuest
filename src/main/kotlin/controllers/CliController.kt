@@ -49,12 +49,17 @@ class CliController : CliktCommand(), Controller {
     }
 
     fun inputToPlayerCommand(input: String, player: Player): Command? {
-        return when (input) {
-            ("-1") -> Surrender()
-            ("0") -> NextPhase(player, isTurnEnd = false)
-            in (1..player.hand.size).toString() -> PlayCard(player, player.hand[input.toInt() - 1])
-            else -> null
+        if (input == "-1") {
+            return Surrender()
+        } else if (input == "0") {
+            return NextPhase(player, isTurnEnd = false)
+        } else if (player.hand.isNotEmpty()) {
+            val number = input.toIntOrNull()
+            if (number != null && number in (1..player.hand.size)) {
+                return PlayCard(player, player.hand[number - 1])
+            }
         }
+        return null
     }
 
     fun printStateOf(player: Player) {

@@ -1,7 +1,6 @@
-package cards.test
+package cards
 
 import Player
-import cards.TreasureCard
 
 class TestTreasureCard(override val owner: Player, override val cost: Int) : TreasureCard {
     override fun execute() {

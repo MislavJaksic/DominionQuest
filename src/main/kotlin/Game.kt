@@ -17,6 +17,7 @@ class Game(val players: ArrayList<Player>, val controller: Controller) {
     fun takeTurn(player: Player): Int {
         while (true) {
             val command: Command = controller.getCommandFrom(player)
+
             command.execute()
             if (command is NextPhase && command.isTurnEnd) {
                 return 0

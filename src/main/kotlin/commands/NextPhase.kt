@@ -4,7 +4,7 @@ import Player
 import phases.ActionPhase
 import phases.BuyPhase
 
-class NextPhase(val player: Player, var isTurnEnd: Boolean) : Command {
+data class NextPhase(val player: Player, var isTurnEnd: Boolean) : Command {
     override fun execute() {
         if (player.phase is ActionPhase) {
             player.phase = BuyPhase(player)
@@ -14,5 +14,4 @@ class NextPhase(val player: Player, var isTurnEnd: Boolean) : Command {
             isTurnEnd = true
         }
     }
-
 }

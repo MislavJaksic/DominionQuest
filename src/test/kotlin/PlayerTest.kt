@@ -1,7 +1,4 @@
 import cards.Card
-import cards.test.TestActionCard
-import cards.test.TestTreasureCard
-import cards.test.TestVictoryCard
 import helpers.BuyTestData
 import helpers.DataSource
 import helpers.PlayTestData
@@ -22,10 +19,10 @@ class PlayerTest {
 
     val player = dataSource.getPlayer()
 
-    val actionCardZero = TestActionCard(player, 0)
-    val actionCardOne = TestActionCard(player, 1)
-    val treasureCardZero = TestTreasureCard(player, 0)
-    val victoryCardZero = TestVictoryCard(player, 0, 0)
+    val actionCardZero = dataSource.getActionCard(player, 0)
+    val actionCardOne = dataSource.getActionCard(player, 1)
+    val treasureCardZero = dataSource.getTreasureCard(player, 0)
+    val victoryCardZero = dataSource.getVictoryCard(player, 0, 0)
 
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested

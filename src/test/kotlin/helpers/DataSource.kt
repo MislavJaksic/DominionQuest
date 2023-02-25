@@ -2,10 +2,16 @@ package helpers
 
 import Player
 import cards.Card
+import cards.TestActionCard
+import cards.TestTreasureCard
+import cards.TestVictoryCard
+import commands.Command
+import commands.NextPhase
+import commands.PlayCard
 
 class DataSource {
     fun getPlayer(
-        name: String = "test",
+        name: String = "cards",
         actions: Int = 0,
         buys: Int = 0,
         coins: Int = 0,
@@ -15,6 +21,18 @@ class DataSource {
         playArea: ArrayList<Card> = ArrayList()
     ): Player {
         return Player(name, actions, buys, coins, hand, drawPile, discardPile, playArea)
+    }
+
+    fun getActionCard(owner: Player = getPlayer(), cost: Int = 0): TestActionCard {
+        return TestActionCard(owner, cost)
+    }
+
+    fun getTreasureCard(owner: Player = getPlayer(), cost: Int = 0): TestTreasureCard {
+        return TestTreasureCard(owner, cost)
+    }
+
+    fun getVictoryCard(owner: Player = getPlayer(), cost: Int = 0, points: Int = 0): TestVictoryCard {
+        return TestVictoryCard(owner, cost, points)
     }
 
     fun getPlayTestData(
@@ -34,5 +52,27 @@ class DataSource {
         expectedBuys: Int = 0
     ): BuyTestData {
         return BuyTestData(player, buyCard, expectedDiscard, expectedCoins, expectedBuys)
+    }
+
+    fun getInputPlayerCommandTestData(
+        input: String = "",
+        player: Player = getPlayer(),
+        command: Command?
+    ): InputPlayerCommandTestData {
+        return InputPlayerCommandTestData(input, player, command)
+    }
+
+    fun getNextPhase(
+        player: Player = getPlayer(),
+        isTurnEnd: Boolean = false
+    ): NextPhase {
+        return NextPhase(player, isTurnEnd)
+    }
+
+    fun getPlayCard(
+        player: Player = getPlayer(),
+        card: Card
+    ): PlayCard {
+        return PlayCard(player, card)
     }
 }
