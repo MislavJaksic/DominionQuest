@@ -1,6 +1,7 @@
 package controllers
 
 import commands.NextPhase
+import commands.NullCommand
 import commands.PlayCard
 import commands.Surrender
 import helpers.DataSource
@@ -48,35 +49,35 @@ class CliControllerTest {
         fun `-2 is bad command`() {
             val command = controller.inputToPlayerCommand("-2", player)
 
-            assertThat(command).isEqualTo(null)
+            assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `1,1 is bad command`() {
             val command = controller.inputToPlayerCommand("1,1", player)
 
-            assertThat(command).isEqualTo(null)
+            assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
-        fun `'a' is bad command`() {
-            val command = controller.inputToPlayerCommand("a", player)
+        fun `'m' is bad command`() {
+            val command = controller.inputToPlayerCommand("m", player)
 
-            assertThat(command).isEqualTo(null)
+            assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `@ is bad command`() {
             val command = controller.inputToPlayerCommand("@", player)
 
-            assertThat(command).isEqualTo(null)
+            assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `'' is bad command`() {
             val command = controller.inputToPlayerCommand("", player)
 
-            assertThat(command).isEqualTo(null)
+            assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
@@ -102,7 +103,7 @@ class CliControllerTest {
                     putInHand(actionCardZero)
                     putInHand(actionCardOne)
                 },
-                command = null
+                command = NullCommand()
             )
 
             assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
@@ -143,7 +144,7 @@ class CliControllerTest {
             val (input, player, command) = dataSource.getInputPlayerCommandTestData(
                 input = "2",
                 player = player.apply { putInHand(actionCardZero) },
-                command = null
+                command = NullCommand()
             )
 
             assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
@@ -164,7 +165,7 @@ class CliControllerTest {
         fun `1 and empty hand is null`() {
             val (input, player, command) = dataSource.getInputPlayerCommandTestData(
                 input = "1",
-                command = null
+                command = NullCommand()
             )
 
             assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)

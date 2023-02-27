@@ -2,7 +2,6 @@ package controllers
 
 import Game
 import Player
-import Supply
 import cards.Card
 import cards.basic.Copper
 import cards.basic.Estate
@@ -11,7 +10,9 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import commands.*
-import enums.BuyCardCode
+import enums.SupplyCardCode
+import supplies.CardPile
+import supplies.Supply
 
 
 class CliController : CliktCommand(), Controller {
@@ -20,11 +21,11 @@ class CliController : CliktCommand(), Controller {
     override fun run() {
         val players: ArrayList<Player> = ArrayList()
 
-        val supplyPiles: MutableMap<BuyCardCode, ArrayList<Card>> = mutableMapOf()
+        val supplyPiles: MutableMap<SupplyCardCode, CardPile> = mutableMapOf()
         val supply = Supply(supplyPiles)
 
         for (x in 1..playerCount) {
-            val player = Player(x.toString(), supply, 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
+            val player = Player(x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
             for (y: Int in 1..3) {
                 player.drawPile.add(Estate(player))
             }
@@ -37,21 +38,23 @@ class CliController : CliktCommand(), Controller {
             players.add(player)
         }
 
-        val game = Game(players, this)
+        val game = Game(players, supply, this)
         game.start()
     }
 
-    override fun getCommandFrom(player: Player): Command {
+    override fun getCommandFrom(player: Player, supply: Supply): Command {
         while (true) {
             printStateOf(player)
             val input = prompt("What do you do?")
 
-            val command = input?.let { inputToPlayerCommand(it, player) }
-            command?.let { return command }
+            if (input != null) {
+                return inputToPlayerCommand(input, player, supply)
+            }
+            return NullCommand()
         }
     }
 
-    fun inputToPlayerCommand(input: String, player: Player): Command? {
+    override fun inputToPlayerCommand(input: String, player: Player, supply: Supply): Command {
         if (input == "-1") return Surrender()
         if (input == "0")
             return NextPhase(player, isTurnEnd = false)
@@ -61,24 +64,24 @@ class CliController : CliktCommand(), Controller {
                 return PlayCard(player, player.hand[number - 1])
             }
         }
-        if (input == "q") return BuyCard(player, BuyCardCode.COPPER)
-        if (input == "w") return BuyCard(player, BuyCardCode.SILVER)
-        if (input == "e") return BuyCard(player, BuyCardCode.GOLD)
-        if (input == "r") return BuyCard(player, BuyCardCode.ESTATE)
-        if (input == "t") return BuyCard(player, BuyCardCode.DUCHY)
-        if (input == "z") return BuyCard(player, BuyCardCode.PROVINCE)
-        if (input == "a") return BuyCard(player, BuyCardCode.FIRST)
-        if (input == "s") return BuyCard(player, BuyCardCode.SECOND)
-        if (input == "d") return BuyCard(player, BuyCardCode.THIRD)
-        if (input == "f") return BuyCard(player, BuyCardCode.FOURTH)
-        if (input == "g") return BuyCard(player, BuyCardCode.FIFTH)
-        if (input == "y") return BuyCard(player, BuyCardCode.SIXTH)
-        if (input == "x") return BuyCard(player, BuyCardCode.SEVENTH)
-        if (input == "c") return BuyCard(player, BuyCardCode.EIGHTH)
-        if (input == "v") return BuyCard(player, BuyCardCode.NINTH)
-        if (input == "b") return BuyCard(player, BuyCardCode.TENTH)
+        if (input == "q") return BuyCardFromSupply(player, SupplyCardCode.COPPER, supply)
+        if (input == "w") return BuyCardFromSupply(player, SupplyCardCode.SILVER, supply)
+        if (input == "e") return BuyCardFromSupply(player, SupplyCardCode.GOLD, supply)
+        if (input == "r") return BuyCardFromSupply(player, SupplyCardCode.ESTATE, supply)
+        if (input == "t") return BuyCardFromSupply(player, SupplyCardCode.DUCHY, supply)
+        if (input == "z") return BuyCardFromSupply(player, SupplyCardCode.PROVINCE, supply)
+        if (input == "a") return BuyCardFromSupply(player, SupplyCardCode.FIRST, supply)
+        if (input == "s") return BuyCardFromSupply(player, SupplyCardCode.SECOND, supply)
+        if (input == "d") return BuyCardFromSupply(player, SupplyCardCode.THIRD, supply)
+        if (input == "f") return BuyCardFromSupply(player, SupplyCardCode.FOURTH, supply)
+        if (input == "g") return BuyCardFromSupply(player, SupplyCardCode.FIFTH, supply)
+        if (input == "y") return BuyCardFromSupply(player, SupplyCardCode.SIXTH, supply)
+        if (input == "x") return BuyCardFromSupply(player, SupplyCardCode.SEVENTH, supply)
+        if (input == "c") return BuyCardFromSupply(player, SupplyCardCode.EIGHTH, supply)
+        if (input == "v") return BuyCardFromSupply(player, SupplyCardCode.NINTH, supply)
+        if (input == "b") return BuyCardFromSupply(player, SupplyCardCode.TENTH, supply)
 
-        return null
+        return NullCommand()
     }
 
     fun printStateOf(player: Player) {

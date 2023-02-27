@@ -1,11 +1,10 @@
 import cards.Card
-import enums.BuyCardCode
 import phases.ActionPhase
 import phases.Phase
+import supplies.Supply
 
 class Player(
     val name: String,
-    val supply: Supply,
     var actions: Int,
     var buys: Int,
     var coins: Int,
@@ -32,14 +31,20 @@ class Player(
         discardPile.add(card)
     }
 
-    fun buy(code: BuyCardCode) {
-
-
-        if (buys > 0 && (coins - card.cost) > -1) {
+    fun buy(card: Card) {
+        if (isBuy(card)) {
             addBuys(-1)
             addCoins(-card.cost)
             gain(card)
         }
+        throw Exception("Can't buy $card")
+    }
+
+    fun isBuy(card: Card): Boolean {
+        if (buys > 0 && (coins - card.cost) > -1) {
+            return true
+        }
+        return false
     }
 
     fun putInHand(card: Card) {

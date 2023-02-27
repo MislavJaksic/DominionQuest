@@ -1,8 +1,9 @@
 import commands.Command
 import commands.NextPhase
 import controllers.Controller
+import supplies.Supply
 
-class Game(val players: ArrayList<Player>, val controller: Controller) {
+class Game(val players: ArrayList<Player>, val supply: Supply, val controller: Controller) {
     fun start() {
         if (players.isEmpty()) {
             throw Exception("No players")
@@ -16,7 +17,7 @@ class Game(val players: ArrayList<Player>, val controller: Controller) {
 
     fun takeTurn(player: Player): Int {
         while (true) {
-            val command: Command = controller.getCommandFrom(player)
+            val command: Command = controller.getCommandFrom(player, supply)
 
             command.execute()
             if (command is NextPhase && command.isTurnEnd) {

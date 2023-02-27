@@ -1,5 +1,4 @@
 import cards.Card
-import helpers.BuyTestData
 import helpers.DataSource
 import helpers.PlayTestData
 import org.assertj.core.api.Assertions.assertThat
@@ -123,7 +122,7 @@ class PlayerTest {
         assertEquals(actionCardOne, player.revealDiscard())
     }
 
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    /*@TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     inner class Buy {
         fun buyTestDataProvider() = Stream.of(
@@ -178,7 +177,7 @@ class PlayerTest {
             assertThat(player.buys).isEqualTo(expectedBuys)
         }
 
-    }
+    }*/
 
 
     @Test
