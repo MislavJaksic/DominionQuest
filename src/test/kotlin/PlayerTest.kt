@@ -1,8 +1,11 @@
 import cards.Card
+import exceptions.BuyException
 import helpers.DataSource
 import helpers.PlayTestData
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -122,62 +125,47 @@ class PlayerTest {
         assertEquals(actionCardOne, player.revealDiscard())
     }
 
-    /*@TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     inner class Buy {
-        fun buyTestDataProvider() = Stream.of(
-            arguments(
-                named(
-                    "not enough buys or coins",
-                    dataSource.getBuyTestData(
-                        buyCard = actionCardZero
-                    )
-                )
-            ),
-            arguments(
-                named(
-                    "enough buys but not coins",
-                    dataSource.getBuyTestData(
-                        player = dataSource.getPlayer(buys = 1),
-                        buyCard = actionCardOne,
-                        expectedBuys = 1
-                    )
-                )
-            ),
-            arguments(
-                named(
-                    "enough coins but buys",
-                    dataSource.getBuyTestData(
-                        player = dataSource.getPlayer(coins = 1),
-                        buyCard = actionCardOne,
-                        expectedCoins = 1
-                    )
-                )
-            ),
-            arguments(
-                named(
-                    "enough coins and buys",
-                    dataSource.getBuyTestData(
-                        player = dataSource.getPlayer(buys = 1, coins = 1),
-                        buyCard = actionCardOne,
-                        expectedDiscard = ArrayList<Card>().apply { add(actionCardOne) }
-                    )
-                )
-            )
-        )
+        @Test
+        fun `not enough buys or coins`() {
+            assertThatThrownBy { player.buy(actionCardZero) }.isInstanceOf(BuyException::class.java)
+        }
 
-        @ParameterizedTest
-        @MethodSource("buyTestDataProvider")
-        fun playActionPhase(buyTestData: BuyTestData) {
-            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = buyTestData
+        @Test
+        fun `enough buys but not coins`() {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
+                player = dataSource.getPlayer(buys = 1),
+                buyCard = actionCardOne,
+                expectedBuys = 1
+            )
+            assertThatThrownBy { player.buy(card) }.isInstanceOf(BuyException::class.java)
+        }
+
+        @Test
+        fun `enough coins but not buys`() {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
+                player = dataSource.getPlayer(coins = 1),
+                buyCard = actionCardOne,
+                expectedCoins = 1
+            )
+            assertThatThrownBy { player.buy(card) }.isInstanceOf(BuyException::class.java)
+        }
+
+        @Test
+        fun `enough coins and buys`() {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
+                player = dataSource.getPlayer(buys = 1, coins = 1),
+                buyCard = actionCardOne,
+                expectedDiscard = ArrayList<Card>().apply { add(actionCardOne) }
+            )
             player.buy(card)
 
             assertThat(player.discardPile).isEqualTo(expectedDiscard)
             assertThat(player.coins).isEqualTo(expectedCoins)
             assertThat(player.buys).isEqualTo(expectedBuys)
         }
-
-    }*/
+    }
 
 
     @Test

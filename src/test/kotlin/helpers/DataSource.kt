@@ -9,24 +9,32 @@ import commands.Command
 import commands.NextPhase
 import commands.PlayCard
 import enums.SupplyCardCode
+import supplies.CardPile
 import supplies.Supply
+import supplies.SupplyProtoFactory
 
 class DataSource {
-    /*fun get supplyPiles(
+    fun getSupplyProtoFactory(
+        supplyPlayer: Player = getPlayer(),
+        playerCount: Int = 2
+    ): SupplyProtoFactory {
+        return SupplyProtoFactory(supplyPlayer, playerCount)
+    }
 
-    ) : MutableMap<BuyCardCode, ArrayList<Card>> {
-        return mutableMapOf<BuyCardCode, ArrayList<Card>>()
-    }*/
+    fun getBasicSupplyPiles(
+
+    ): MutableMap<SupplyCardCode, CardPile> {
+        return getSupplyProtoFactory().getBasicPiles()
+    }
 
     fun getSupply(
-        supplyPiles: MutableMap<SupplyCardCode, ArrayList<Card>> = mutableMapOf()
+        supplyPiles: MutableMap<SupplyCardCode, CardPile> = getBasicSupplyPiles()
     ): Supply {
         return Supply(supplyPiles)
     }
 
     fun getPlayer(
         name: String = "cards",
-        supply: Supply = getSupply(),
         actions: Int = 0,
         buys: Int = 0,
         coins: Int = 0,
@@ -35,7 +43,7 @@ class DataSource {
         discardPile: ArrayList<Card> = ArrayList(),
         playArea: ArrayList<Card> = ArrayList()
     ): Player {
-        return Player(name, supply, actions, buys, coins, hand, drawPile, discardPile, playArea)
+        return Player(name, actions, buys, coins, hand, drawPile, discardPile, playArea)
     }
 
     fun getActionCard(owner: Player = getPlayer(), cost: Int = 0): TestActionCard {

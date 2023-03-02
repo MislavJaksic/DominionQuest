@@ -16,6 +16,8 @@ class CliControllerTest {
 
     val controller: CliController = CliController()
 
+    val supply = dataSource.getSupply()
+
     val actionCardZero = dataSource.getActionCard(player, 0)
     val actionCardOne = dataSource.getActionCard(player, 1)
     val treasureCardZero = dataSource.getTreasureCard(player, 0)
@@ -33,49 +35,49 @@ class CliControllerTest {
     inner class InputToPlayerCommand {
         @Test
         fun surrender() {
-            val command = controller.inputToPlayerCommand("-1", player)
+            val command = controller.inputToPlayerCommand("-1", player, supply)
 
             assertThat(command).isEqualTo(Surrender())
         }
 
         @Test
         fun nextPhase() {
-            val command = controller.inputToPlayerCommand("0", player)
+            val command = controller.inputToPlayerCommand("0", player, supply)
 
             assertThat(command).isEqualTo(NextPhase(player, isTurnEnd = false))
         }
 
         @Test
         fun `-2 is bad command`() {
-            val command = controller.inputToPlayerCommand("-2", player)
+            val command = controller.inputToPlayerCommand("-2", player, supply)
 
             assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `1,1 is bad command`() {
-            val command = controller.inputToPlayerCommand("1,1", player)
+            val command = controller.inputToPlayerCommand("1,1", player, supply)
 
             assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `'m' is bad command`() {
-            val command = controller.inputToPlayerCommand("m", player)
+            val command = controller.inputToPlayerCommand("m", player, supply)
 
             assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `@ is bad command`() {
-            val command = controller.inputToPlayerCommand("@", player)
+            val command = controller.inputToPlayerCommand("@", player, supply)
 
             assertThat(command).isEqualTo(NullCommand())
         }
 
         @Test
         fun `'' is bad command`() {
-            val command = controller.inputToPlayerCommand("", player)
+            val command = controller.inputToPlayerCommand("", player, supply)
 
             assertThat(command).isEqualTo(NullCommand())
         }
@@ -92,7 +94,7 @@ class CliControllerTest {
                 command = PlayCard(player, actionCardZero)
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
 
         @Test
@@ -106,7 +108,7 @@ class CliControllerTest {
                 command = NullCommand()
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
 
         @Test
@@ -121,7 +123,7 @@ class CliControllerTest {
                 command = PlayCard(player, actionCardOne)
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
 
         @Test
@@ -136,7 +138,7 @@ class CliControllerTest {
                 command = PlayCard(player, actionCardZero)
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
 
         @Test
@@ -147,7 +149,7 @@ class CliControllerTest {
                 command = NullCommand()
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
 
         @Test
@@ -158,7 +160,7 @@ class CliControllerTest {
                 command = PlayCard(player, actionCardZero)
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
 
         @Test
@@ -168,7 +170,7 @@ class CliControllerTest {
                 command = NullCommand()
             )
 
-            assertThat(controller.inputToPlayerCommand(input, player)).isEqualTo(command)
+            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
     }
 

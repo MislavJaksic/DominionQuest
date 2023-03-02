@@ -1,7 +1,7 @@
 import cards.Card
+import exceptions.BuyException
 import phases.ActionPhase
 import phases.Phase
-import supplies.Supply
 
 class Player(
     val name: String,
@@ -28,6 +28,7 @@ class Player(
     }
 
     fun gain(card: Card) {
+        card.owner = this
         discardPile.add(card)
     }
 
@@ -36,12 +37,13 @@ class Player(
             addBuys(-1)
             addCoins(-card.cost)
             gain(card)
+        } else {
+            throw BuyException("$name player can't buy $card card because it has $buys buys and $coins coins")
         }
-        throw Exception("Can't buy $card")
-    }
+}
 
     fun isBuy(card: Card): Boolean {
-        if (buys > 0 && (coins - card.cost) > -1) {
+        if (buys > 0 && ((coins - card.cost) > -1)) {
             return true
         }
         return false
@@ -94,6 +96,6 @@ class Player(
     }
 
     override fun toString(): String {
-        return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins, hand=$hand, drawPile=$drawPile, discardPile=$discardPile, playArea=$playArea, phase=$phase)"
+        return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins, hand=$hand, drawPile=$drawPile, discardPile=$discardPile, playArea=$playArea)"
     }
 }

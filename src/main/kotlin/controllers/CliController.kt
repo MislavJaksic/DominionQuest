@@ -13,6 +13,7 @@ import commands.*
 import enums.SupplyCardCode
 import supplies.CardPile
 import supplies.Supply
+import supplies.SupplyProtoFactory
 
 
 class CliController : CliktCommand(), Controller {
@@ -21,8 +22,8 @@ class CliController : CliktCommand(), Controller {
     override fun run() {
         val players: ArrayList<Player> = ArrayList()
 
-        val supplyPiles: MutableMap<SupplyCardCode, CardPile> = mutableMapOf()
-        val supply = Supply(supplyPiles)
+        val factory = SupplyProtoFactory(Player("supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList()), playerCount)
+        val supply = Supply(factory.getBasicPiles())
 
         for (x in 1..playerCount) {
             val player = Player(x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())

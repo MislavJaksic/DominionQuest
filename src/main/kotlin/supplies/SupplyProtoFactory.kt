@@ -5,6 +5,7 @@ import cards.Card
 import cards.basic.Copper
 import cards.basic.Gold
 import cards.basic.Silver
+import enums.SupplyCardCode
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
 
@@ -29,27 +30,23 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
         return
     }*/
 
-    fun getCopper(): ArrayList<Card> {
-        val cards = ArrayList<Card>()
-        for (i in 1..60) {
-            cards.add(Copper(supplyPlayer))
-        }
-        return cards
+    fun getBasicPiles(): MutableMap<SupplyCardCode, CardPile> {
+        return mutableMapOf(
+            Pair(SupplyCardCode.COPPER, getCopper()),
+            Pair(SupplyCardCode.SILVER, getSilver()),
+            Pair(SupplyCardCode.GOLD, getGold()),
+        )
     }
 
-    fun getSilver(): ArrayList<Card> {
-        val cards = ArrayList<Card>()
-        for (i in 1..40) {
-            cards.add(Silver(supplyPlayer))
-        }
-        return cards
+    fun getCopper(): SupplyPile {
+        return SupplyPile(Copper(supplyPlayer), ArrayList<Card>().apply { repeat(60) { add(Copper(supplyPlayer)) } })
     }
 
-    fun getGold(): ArrayList<Card> {
-        val cards = ArrayList<Card>()
-        for (i in 1..30) {
-            cards.add(Gold(supplyPlayer))
-        }
-        return cards
+    fun getSilver(): SupplyPile {
+        return SupplyPile(Silver(supplyPlayer), ArrayList<Card>().apply { repeat(40) { add(Silver(supplyPlayer)) } })
+    }
+
+    fun getGold(): SupplyPile {
+        return SupplyPile(Gold(supplyPlayer), ArrayList<Card>().apply { repeat(30) { add(Gold(supplyPlayer)) } })
     }
 }
