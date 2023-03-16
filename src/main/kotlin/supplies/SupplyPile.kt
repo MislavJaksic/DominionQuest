@@ -18,4 +18,8 @@ class SupplyPile(override val example: Card, override val stack: ArrayList<Card>
     override fun isNotEmpty(): Boolean {
         return !isEmpty()
     }
+
+    override fun size(): Int {
+        return stack.size
+    }
 }

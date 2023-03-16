@@ -10,4 +10,5 @@ interface CardPile {
     fun remove(): Card
     fun isEmpty(): Boolean
     fun isNotEmpty(): Boolean
+    fun size(): Int
 }

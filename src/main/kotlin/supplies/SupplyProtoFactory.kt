@@ -8,28 +8,6 @@ import cards.basic.Silver
 import enums.SupplyCardCode
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
-
-    /*fun getPile(code: BuyCardCode): ArrayList<Card> {
-        code.
-    }
-
-    fun getSupplyForPlayers(code: SupplyCode):Supply {
-        val supplyPiles: MutableMap<BuyCardCode, ArrayList<Card>> = mutableMapOf(Pair(BuyCardCode.COPPER, getPile(BuyCardCode.COPPER)))
-        if (code == SupplyCode.BASIC) {
-            return Supply(mutableMapOf(Pair(BuyCardCode.COPPER, )))
-        } else if (code == SupplyCode.FIRST_GAME) {
-            return Supply(mutableMapOf(Pair(BuyCardCode.COPPER, )))
-        }
-    }
-
-    fun getBasicSupplyPairs(): ArrayList<Pair<BuyCardCode, ArrayList<Card>>> {
-        val arrayList = ArrayList<Pair<BuyCardCode, ArrayList<Card>>>()
-        for (i in 1..60) {
-
-        }
-        return
-    }*/
-
     fun getBasicPiles(): MutableMap<SupplyCardCode, CardPile> {
         return mutableMapOf(
             Pair(SupplyCardCode.COPPER, getCopper()),
