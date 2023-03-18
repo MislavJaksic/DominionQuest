@@ -11,7 +11,6 @@ import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.int
 import commands.*
 import enums.SupplyCardCode
-import supplies.CardPile
 import supplies.Supply
 import supplies.SupplyProtoFactory
 
@@ -22,7 +21,10 @@ class CliController : CliktCommand(), Controller {
     override fun run() {
         val players: ArrayList<Player> = ArrayList()
 
-        val factory = SupplyProtoFactory(Player("supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList()), playerCount)
+        val factory = SupplyProtoFactory(
+            Player("supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList()),
+            playerCount
+        )
         val supply = Supply(factory.getBasicPiles())
 
         for (x in 1..playerCount) {

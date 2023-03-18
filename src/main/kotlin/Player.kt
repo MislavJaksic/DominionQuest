@@ -40,7 +40,7 @@ class Player(
         } else {
             throw BuyException("$name player can't buy $card card because it has $buys buys and $coins coins")
         }
-}
+    }
 
     fun isBuy(card: Card): Boolean {
         if (buys > 0 && ((coins - card.cost) > -1)) {

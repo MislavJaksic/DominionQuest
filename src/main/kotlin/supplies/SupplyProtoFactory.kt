@@ -2,9 +2,7 @@ package supplies
 
 import Player
 import cards.Card
-import cards.basic.Copper
-import cards.basic.Gold
-import cards.basic.Silver
+import cards.basic.*
 import enums.SupplyCardCode
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
@@ -13,6 +11,9 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
             Pair(SupplyCardCode.COPPER, getCopper()),
             Pair(SupplyCardCode.SILVER, getSilver()),
             Pair(SupplyCardCode.GOLD, getGold()),
+            Pair(SupplyCardCode.ESTATE, getEstate()),
+            Pair(SupplyCardCode.DUCHY, getDuchy()),
+            Pair(SupplyCardCode.PROVINCE, getProvince()),
         )
     }
 
@@ -26,5 +27,23 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
 
     fun getGold(): SupplyPile {
         return SupplyPile(Gold(supplyPlayer), ArrayList<Card>().apply { repeat(30) { add(Gold(supplyPlayer)) } })
+    }
+
+    fun getEstate(): SupplyPile {
+        return SupplyPile(
+            Estate(supplyPlayer),
+            ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Estate(supplyPlayer)) } })
+    }
+
+    fun getDuchy(): SupplyPile {
+        return SupplyPile(
+            Duchy(supplyPlayer),
+            ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Duchy(supplyPlayer)) } })
+    }
+
+    fun getProvince(): SupplyPile {
+        return SupplyPile(
+            Province(supplyPlayer),
+            ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Province(supplyPlayer)) } })
     }
 }

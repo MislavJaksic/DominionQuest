@@ -4,8 +4,6 @@ import helpers.DataSource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 class MarketTest {
     val player = DataSource().getPlayer()
     val card = Market(player)

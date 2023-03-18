@@ -1,11 +1,8 @@
 package cards.basic
 
-import cards.vanilla.Market
 import helpers.DataSource
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 class GoldTest {
     val player = DataSource().getPlayer()
