@@ -1,3 +1,5 @@
+import commands.NextPhase
+import commands.Surrender
 import controllers.CliController
 import helpers.DataSource
 import io.mockk.every
@@ -17,8 +19,10 @@ class GameTest {
 
     val controllerMock: CliController = mockk()
 
-    val gameZero = Game(playersZero, controllerMock)
-    val gameOne = Game(playersOne, controllerMock)
+    val supply = dataSource.getSupply()
+
+    val gameZero = Game(playersZero, supply, controllerMock)
+    val gameOne = Game(playersOne, supply, controllerMock)
 
     @Nested
     inner class Start {
@@ -29,7 +33,7 @@ class GameTest {
 
         @Test
         fun `one player exits`() {
-            every { controllerMock.getInputFrom(player) } returns -1
+            every { controllerMock.getCommandFrom(player, supply) } returns Surrender()
             assertThatThrownBy { gameOne.start() }.hasMessage("Surrender")
         }
     }
@@ -38,13 +42,19 @@ class GameTest {
     inner class TakeTurn {
         @Test
         fun surrender() {
-            every { controllerMock.getInputFrom(player) } returns -1
+            every { controllerMock.getCommandFrom(player, supply) } returns Surrender()
             assertThatThrownBy { gameOne.takeTurn(player) }.hasMessage("Surrender")
         }
 
         @Test
+        fun `start action phase`() {
+            every { controllerMock.getCommandFrom(player, supply) } returns NextPhase(player, isTurnEnd = false)
+            assertThat(gameOne.takeTurn(player)).isEqualTo(0)
+        }
+
+        @Test
         fun `pass action and buy phases`() {
-            every { controllerMock.getInputFrom(player) } returns 0
+            every { controllerMock.getCommandFrom(player, supply) } returns NextPhase(player, isTurnEnd = true)
             assertThat(gameOne.takeTurn(player)).isEqualTo(0)
         }
     }

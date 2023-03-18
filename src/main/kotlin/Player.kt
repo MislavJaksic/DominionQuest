@@ -1,4 +1,5 @@
 import cards.Card
+import exceptions.BuyException
 import phases.ActionPhase
 import phases.Phase
 
@@ -8,8 +9,8 @@ class Player(
     var buys: Int,
     var coins: Int,
     val hand: ArrayList<Card>,
-    var drawPile: ArrayList<Card>,
-    var discardPile: ArrayList<Card>,
+    val drawPile: ArrayList<Card>,
+    val discardPile: ArrayList<Card>,
     val playArea: ArrayList<Card>
 ) {
     var phase: Phase = ActionPhase(this)
@@ -27,12 +28,25 @@ class Player(
     }
 
     fun gain(card: Card) {
+        card.owner = this
         discardPile.add(card)
     }
 
     fun buy(card: Card) {
-        addBuys(-1)
-        gain(card)
+        if (isBuy(card)) {
+            addBuys(-1)
+            addCoins(-card.cost)
+            gain(card)
+        } else {
+            throw BuyException("$name player can't buy $card card because it has $buys buys and $coins coins")
+        }
+    }
+
+    fun isBuy(card: Card): Boolean {
+        if (buys > 0 && ((coins - card.cost) > -1)) {
+            return true
+        }
+        return false
     }
 
     fun putInHand(card: Card) {
@@ -63,7 +77,8 @@ class Player(
     }
 
     fun shuffleDeck() {
-        drawPile = discardPile.also { discardPile = drawPile }
+        drawPile.addAll(discardPile)
+        discardPile.removeAll(discardPile.toSet())
         drawPile.shuffle()
     }
 
@@ -78,5 +93,9 @@ class Player(
         actions = 1
         buys = 1
         coins = 0
+    }
+
+    override fun toString(): String {
+        return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins, hand=$hand, drawPile=$drawPile, discardPile=$discardPile, playArea=$playArea)"
     }
 }

@@ -3,7 +3,7 @@ package cards.basic
 import Player
 import cards.TreasureCard
 
-class Silver(override val owner: Player) : TreasureCard {
+data class Silver(override var owner: Player) : TreasureCard {
     override fun execute() {
         owner.addCoins(2)
     }

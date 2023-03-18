@@ -1,11 +1,11 @@
 import cards.Card
-import cards.test.TestActionCard
-import cards.test.TestTreasureCard
-import cards.test.TestVictoryCard
+import exceptions.BuyException
 import helpers.DataSource
 import helpers.PlayTestData
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -21,10 +21,10 @@ class PlayerTest {
 
     val player = dataSource.getPlayer()
 
-    val actionCardZero = TestActionCard(player, 0)
-    val actionCardOne = TestActionCard(player, 1)
-    val treasureCardZero = TestTreasureCard(player, 0)
-    val victoryCardZero = TestVictoryCard(player, 0, 0)
+    val actionCardZero = dataSource.getActionCard(player, 0)
+    val actionCardOne = dataSource.getActionCard(player, 1)
+    val treasureCardZero = dataSource.getTreasureCard(player, 0)
+    val victoryCardZero = dataSource.getVictoryCard(player, 0, 0)
 
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
@@ -34,33 +34,26 @@ class PlayerTest {
                 named(
                     "play action without actions in action phase",
                     dataSource.getPlayTestData(
-                        player = dataSource.getPlayer(),
                         playCard = actionCardZero,
-                        expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                        expectedPlayArea = ArrayList<Card>()
+                        expectedHand = ArrayList<Card>().apply { add(actionCardZero) }
                     )
                 )
             ),
             arguments(dataSource.getPlayTestData(
                 player = dataSource.getPlayer(actions = 1),
                 playCard = actionCardZero,
-                expectedHand = ArrayList<Card>(),
                 expectedPlayArea = ArrayList<Card>().apply { add(actionCardZero) }
             )),
             arguments(
                 dataSource.getPlayTestData(
-                    player = dataSource.getPlayer(),
                     playCard = treasureCardZero,
                     expectedHand = ArrayList<Card>().apply { add(treasureCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(
                 dataSource.getPlayTestData(
-                    player = dataSource.getPlayer(),
                     playCard = victoryCardZero,
                     expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(
@@ -68,7 +61,6 @@ class PlayerTest {
                     player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
                     playCard = actionCardZero,
                     expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(
@@ -76,13 +68,11 @@ class PlayerTest {
                     player = dataSource.getPlayer(actions = 1).apply { this.phase = BuyPhase(this) },
                     playCard = actionCardZero,
                     expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             ),
             arguments(dataSource.getPlayTestData(
                 player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
                 playCard = treasureCardZero,
-                expectedHand = ArrayList<Card>(),
                 expectedPlayArea = ArrayList<Card>().apply { add(treasureCardZero) }
             )),
             arguments(
@@ -90,7 +80,6 @@ class PlayerTest {
                     player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
                     playCard = victoryCardZero,
                     expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
-                    expectedPlayArea = ArrayList<Card>()
                 )
             )
         )
@@ -136,13 +125,48 @@ class PlayerTest {
         assertEquals(actionCardOne, player.revealDiscard())
     }
 
-    @Test
-    fun buy() {
-        player.buy(actionCardZero)
-        player.buy(actionCardOne)
-        assertEquals(actionCardOne, player.revealDiscard())
-        assertEquals(-2, player.buys)
+    @Nested
+    inner class Buy {
+        @Test
+        fun `not enough buys or coins`() {
+            assertThatThrownBy { player.buy(actionCardZero) }.isInstanceOf(BuyException::class.java)
+        }
+
+        @Test
+        fun `enough buys but not coins`() {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
+                player = dataSource.getPlayer(buys = 1),
+                buyCard = actionCardOne,
+                expectedBuys = 1
+            )
+            assertThatThrownBy { player.buy(card) }.isInstanceOf(BuyException::class.java)
+        }
+
+        @Test
+        fun `enough coins but not buys`() {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
+                player = dataSource.getPlayer(coins = 1),
+                buyCard = actionCardOne,
+                expectedCoins = 1
+            )
+            assertThatThrownBy { player.buy(card) }.isInstanceOf(BuyException::class.java)
+        }
+
+        @Test
+        fun `enough coins and buys`() {
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
+                player = dataSource.getPlayer(buys = 1, coins = 1),
+                buyCard = actionCardOne,
+                expectedDiscard = ArrayList<Card>().apply { add(actionCardOne) }
+            )
+            player.buy(card)
+
+            assertThat(player.discardPile).isEqualTo(expectedDiscard)
+            assertThat(player.coins).isEqualTo(expectedCoins)
+            assertThat(player.buys).isEqualTo(expectedBuys)
+        }
     }
+
 
     @Test
     fun putOnDraw() {

@@ -1,7 +1,10 @@
 package controllers
 
 import Player
+import commands.Command
+import supplies.Supply
 
 interface Controller {
-    fun getInputFrom(player: Player): Int
+    fun getCommandFrom(player: Player, supply: Supply): Command
+    fun inputToPlayerCommand(input: String, player: Player, supply: Supply): Command
 }
