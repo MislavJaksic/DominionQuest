@@ -1,15 +1,16 @@
+import cards.basic.Copper
+import cards.basic.Estate
 import commands.Command
 import commands.NextPhase
 import controllers.Controller
-import supplies.Supply
 
-class Game(val players: ArrayList<Player>, val supply: Supply, val controller: Controller) {
+class Game(val gameState: GameState, val controller: Controller) {
     fun start() {
-        if (players.isEmpty()) {
+        if (gameState.players.isEmpty()) {
             throw Exception("No players")
         }
         while (true) {
-            for (player in players) {
+            for (player in gameState.players) {
                 takeTurn(player)
             }
         }
@@ -17,7 +18,7 @@ class Game(val players: ArrayList<Player>, val supply: Supply, val controller: C
 
     fun takeTurn(player: Player): Int {
         while (true) {
-            val command: Command = controller.getCommandFrom(player, supply)
+            val command: Command = controller.getCommandFrom(player, gameState.supply)
 
             command.execute()
             if (command is NextPhase && command.isTurnEnd) {

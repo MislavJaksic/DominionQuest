@@ -1,5 +1,7 @@
 package helpers
 
+import GameState
+import GameStateProtoFactory
 import Player
 import cards.Card
 import cards.TestActionCard
@@ -14,6 +16,12 @@ import supplies.Supply
 import supplies.SupplyProtoFactory
 
 class DataSource {
+    fun getGameState(
+        playerCount: Int = 2
+    ): GameState {
+        return GameStateProtoFactory().getGameState(playerCount)
+    }
+
     fun getSupplyProtoFactory(
         supplyPlayer: Player = getPlayer(),
         playerCount: Int = 2
