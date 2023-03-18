@@ -1,5 +1,6 @@
 package controllers
 
+import GameState
 import Player
 import commands.Command
 import supplies.Supply

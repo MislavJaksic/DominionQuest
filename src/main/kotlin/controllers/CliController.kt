@@ -27,7 +27,7 @@ class CliController : CliktCommand(), Controller {
 
     override fun getCommandFrom(player: Player, supply: Supply): Command {
         while (true) {
-            printStateOf(player)
+            printGameState(player, supply)
             val input = prompt("What do you do?")
 
             if (input != null) {
@@ -67,29 +67,35 @@ class CliController : CliktCommand(), Controller {
         return NullCommand()
     }
 
-    fun printStateOf(player: Player) {
+    fun printGameState(player: Player, supply: Supply) {
         println(
-            """=== Player ${player.name}::${player.phase::class.java.simpleName} ===
-actions  buys  coins
-=${player.actions}       =${player.buys}    =${player.coins}
-playArea=${arrayToFlatString(player.playArea)}
-hand=${arrayToCommandString(player.hand)}
-commands= -1 -> exit, 0 -> next phase
-=== ==="""
+"""
+${getSupplyRepresentation(supply)}
+${getPlayerRepresentation(player)}
+"""
         )
     }
 
-    /*fun printStateOf(kingdom: Kingdom) {
-        println(
-            """=== Player ${player.name}::${player.phase::class.java.simpleName} ===
+    fun getPlayerRepresentation(player:Player): String {
+        return """
+=== Player ${player.name}::${player.phase::class.java.simpleName} ===
 actions  buys  coins
 =${player.actions}       =${player.buys}    =${player.coins}
 playArea=${arrayToFlatString(player.playArea)}
 hand=${arrayToCommandString(player.hand)}
 commands= -1 -> exit, 0 -> next phase
-=== ==="""
-        )
-    }*/
+=== ===
+"""
+    }
+    fun getSupplyRepresentation(supply:Supply):String {
+        var representationString = "=== Supply ===\n"
+        for ((code, array) in supply.supplyPiles.entries) {
+            representationString += code
+            representationString += " -> " + array.size().toString() + ", "
+        }
+        return representationString
+    }
+
 
     fun arrayToFlatString(array: ArrayList<Card>): String {
         var string = ""
