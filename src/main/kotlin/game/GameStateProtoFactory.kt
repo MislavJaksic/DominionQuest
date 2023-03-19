@@ -1,3 +1,5 @@
+package game
+
 import cards.basic.Copper
 import cards.basic.Estate
 import supplies.Supply
@@ -35,7 +37,7 @@ class GameStateProtoFactory {
     }
 
     fun getSupply(gameState: GameState): Supply {
-        val supplyPlayer = Player(gameState,"supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
+        val supplyPlayer = Player(gameState, "supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
         val factory = SupplyProtoFactory(supplyPlayer, gameState.playerCount)
         return Supply(factory.getBasicPiles())
     }

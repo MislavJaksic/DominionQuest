@@ -1,6 +1,6 @@
 package cards
 
-import Player
+import game.Player
 
 interface Card {
     var owner: Player

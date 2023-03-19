@@ -1,7 +1,7 @@
 package phases
 
-import Player
 import cards.Card
+import game.Player
 
 /** Implements STATE pattern
  */

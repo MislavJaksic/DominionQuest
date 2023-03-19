@@ -3,15 +3,12 @@ package cards.vanilla
 import cards.Card
 import cards.basic.Copper
 import cards.basic.Silver
-import commands.Surrender
 import controllers.CliController
 import helpers.DataSource
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 
 class CellarTest {
     val controllerMock: CliController = mockk()
@@ -31,11 +28,11 @@ class CellarTest {
 
     @Test
     fun execute() {
-        val expectedHand = ArrayList<Card>().apply{add(copper)}
+        val expectedHand = ArrayList<Card>().apply { add(copper) }
         every { controllerMock.askToPickCards(player.hand, 0) } returns expectedHand
         card.execute()
 
-        assertThat(player.hand).isEqualTo(ArrayList<Card>().apply{add(silver)})
+        assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(silver) })
         assertThat(player.discardPile).isEqualTo(expectedHand)
     }
 

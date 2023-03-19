@@ -2,11 +2,7 @@ package supplies
 
 import cards.Card
 
-class SupplyPile(override val example: Card, override val stack: ArrayList<Card>) : CardPile {
-    override fun add(card: Card) {
-        stack.add(card)
-    }
-
+data class SupplyPile(override val example: Card, override val stack: ArrayList<Card>) : CardPile {
     override fun remove(): Card {
         return stack.removeLast()
     }

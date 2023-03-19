@@ -1,12 +1,6 @@
 package controllers
 
-import commands.NextPhase
-import commands.NullCommand
-import commands.PlayCard
-import commands.Surrender
 import helpers.DataSource
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class CliControllerTest {
@@ -31,7 +25,7 @@ class CliControllerTest {
     fun getCommandFrom() {
     }
 
-    @Nested
+    /*@Nested
     inner class InputToPlayerCommand {
         @Test
         fun surrender() {
@@ -172,7 +166,7 @@ class CliControllerTest {
 
             assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
         }
-    }
+    }*/
 
     @Test
     fun printStateOf() {

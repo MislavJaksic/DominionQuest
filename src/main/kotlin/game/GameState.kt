@@ -1,3 +1,5 @@
+package game
+
 import controllers.Controller
 import supplies.Supply
 

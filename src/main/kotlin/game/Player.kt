@@ -1,5 +1,6 @@
+package game
+
 import cards.Card
-import exceptions.BuyException
 import phases.ActionPhase
 import phases.Phase
 
@@ -34,23 +35,19 @@ class Player(
     }
 
     fun buy(card: Card) {
-        if (isBuy(card)) {
-            addBuys(-1)
-            addCoins(-card.cost)
-            gain(card)
-        } else {
-            throw BuyException("$name player can't buy $card card because it has $buys buys and $coins coins")
-        }
+        addBuys(-1)
+        addCoins(-card.cost)
+        gain(card)
     }
 
     fun isBuy(card: Card): Boolean {
-        if (buys > 0 && ((coins - card.cost) > -1)) {
+        if (buys > 0 && (coins >= card.cost)) {
             return true
         }
         return false
     }
 
-    fun discard(card:Card) {
+    fun discard(card: Card) {
         discardPile.add(hand[hand.indexOf(card)])
         hand.remove(card)
     }
@@ -99,5 +96,9 @@ class Player(
         actions = 1
         buys = 1
         coins = 0
+    }
+
+    override fun toString(): String {
+        return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins)"
     }
 }

@@ -1,4 +1,6 @@
-import commands.NextPhase
+package game
+
+import commands.PassTurn
 import commands.Surrender
 import controllers.CliController
 import helpers.DataSource
@@ -31,7 +33,13 @@ class GameTest {
 
         @Test
         fun `one player exits`() {
-            every { controllerMock.getCommandFrom(player, supply) } returns Surrender()
+            every {
+                controllerMock.askToPickCommand(
+                    onePlayerGame.getAvailableCommands(player),
+                    player,
+                    supply
+                )
+            } returns Surrender()
             assertThatThrownBy { onePlayerGame.start() }.hasMessage("Surrender")
         }
     }
@@ -40,19 +48,25 @@ class GameTest {
     inner class TakeTurn {
         @Test
         fun surrender() {
-            every { controllerMock.getCommandFrom(player, supply) } returns Surrender()
+            every {
+                controllerMock.askToPickCommand(
+                    onePlayerGame.getAvailableCommands(player),
+                    player,
+                    supply
+                )
+            } returns Surrender()
             assertThatThrownBy { onePlayerGame.takeTurn(player) }.hasMessage("Surrender")
         }
 
         @Test
-        fun `start action phase`() {
-            every { controllerMock.getCommandFrom(player, supply) } returns NextPhase(player, isTurnEnd = false)
-            assertThat(onePlayerGame.takeTurn(player)).isEqualTo(0)
-        }
-
-        @Test
-        fun `pass action and buy phases`() {
-            every { controllerMock.getCommandFrom(player, supply) } returns NextPhase(player, isTurnEnd = true)
+        fun `end turn`() {
+            every {
+                controllerMock.askToPickCommand(
+                    onePlayerGame.getAvailableCommands(player),
+                    player,
+                    supply
+                )
+            } returns PassTurn(player)
             assertThat(onePlayerGame.takeTurn(player)).isEqualTo(0)
         }
     }

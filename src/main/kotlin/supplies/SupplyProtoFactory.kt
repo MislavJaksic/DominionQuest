@@ -1,9 +1,9 @@
 package supplies
 
-import Player
 import cards.Card
 import cards.basic.*
 import enums.SupplyCardCode
+import game.Player
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
     fun getBasicPiles(): MutableMap<SupplyCardCode, CardPile> {

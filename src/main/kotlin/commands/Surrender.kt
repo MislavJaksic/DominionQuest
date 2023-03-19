@@ -14,4 +14,8 @@ class Surrender : Command {
     override fun hashCode(): Int {
         return javaClass.hashCode()
     }
+
+    override fun toString(): String {
+        return "Surrender()"
+    }
 }

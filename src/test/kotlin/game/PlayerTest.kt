@@ -1,10 +1,9 @@
+package game
+
 import cards.Card
-import cards.basic.Copper
-import exceptions.BuyException
 import helpers.DataSource
 import helpers.PlayTestData
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Named.named
@@ -129,31 +128,6 @@ class PlayerTest {
     @Nested
     inner class Buy {
         @Test
-        fun `not enough buys or coins`() {
-            assertThatThrownBy { player.buy(actionCardZero) }.isInstanceOf(BuyException::class.java)
-        }
-
-        @Test
-        fun `enough buys but not coins`() {
-            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
-                player = dataSource.getPlayer(buys = 1),
-                buyCard = actionCardOne,
-                expectedBuys = 1
-            )
-            assertThatThrownBy { player.buy(card) }.isInstanceOf(BuyException::class.java)
-        }
-
-        @Test
-        fun `enough coins but not buys`() {
-            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
-                player = dataSource.getPlayer(coins = 1),
-                buyCard = actionCardOne,
-                expectedCoins = 1
-            )
-            assertThatThrownBy { player.buy(card) }.isInstanceOf(BuyException::class.java)
-        }
-
-        @Test
         fun `enough coins and buys`() {
             val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
                 player = dataSource.getPlayer(buys = 1, coins = 1),
@@ -256,7 +230,7 @@ class PlayerTest {
 
         player.discard(treasureCardZero)
 
-        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply{add(treasureCardZero)})
+        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(treasureCardZero) })
         assertThat(player.hand).isEqualTo(ArrayList<Card>())
     }
 }
