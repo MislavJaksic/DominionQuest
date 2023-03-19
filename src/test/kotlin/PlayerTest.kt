@@ -1,4 +1,5 @@
 import cards.Card
+import cards.basic.Copper
 import exceptions.BuyException
 import helpers.DataSource
 import helpers.PlayTestData
@@ -247,5 +248,15 @@ class PlayerTest {
             player.cleanup()
             assertEquals(actionCardZero, player.hand[0])
         }
+    }
+
+    @Test
+    fun discard() {
+        player.putInHand(treasureCardZero)
+
+        player.discard(treasureCardZero)
+
+        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply{add(treasureCardZero)})
+        assertThat(player.hand).isEqualTo(ArrayList<Card>())
     }
 }

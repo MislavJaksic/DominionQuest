@@ -4,7 +4,7 @@ import supplies.Supply
 import supplies.SupplyProtoFactory
 
 class GameStateProtoFactory {
-    fun getGameState(playerCount:Int): GameState {
+    fun getGameState(playerCount: Int): GameState {
         val gameState = GameState(playerCount)
 
         val players = getPlayers(gameState)
@@ -19,7 +19,7 @@ class GameStateProtoFactory {
     fun getPlayers(gameState: GameState): ArrayList<Player> {
         val players = ArrayList<Player>()
         for (x in 1..gameState.playerCount) {
-            val player = Player(x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
+            val player = Player(gameState, x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
             for (y: Int in 1..3) {
                 player.drawPile.add(Estate(player))
             }
@@ -34,8 +34,8 @@ class GameStateProtoFactory {
         return players
     }
 
-    fun getSupply(gameState:GameState): Supply {
-        val supplyPlayer = Player("supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
+    fun getSupply(gameState: GameState): Supply {
+        val supplyPlayer = Player(gameState,"supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
         val factory = SupplyProtoFactory(supplyPlayer, gameState.playerCount)
         return Supply(factory.getBasicPiles())
     }

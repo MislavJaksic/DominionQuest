@@ -1,7 +1,6 @@
 package controllers
 
 import Game
-import GameState
 import GameStateProtoFactory
 import Player
 import cards.Card
@@ -21,7 +20,7 @@ class CliController : CliktCommand(), Controller {
         val factory = GameStateProtoFactory()
         val gameState = factory.getGameState(playerCount)
         val game = Game(gameState, this)
-        
+
         game.start()
     }
 
@@ -67,27 +66,49 @@ class CliController : CliktCommand(), Controller {
         return NullCommand()
     }
 
+    override fun askToPickCards(cards: ArrayList<Card>, number: Int): ArrayList<Card> {
+        while (true) {
+            println(arrayToFlatString(cards))
+            val input = prompt("List $number of characters seperated by whitespace to pick cards")
+
+            if (input != null) {
+                val inputs: List<String> = input.split(" ")
+                val pickedCards = ArrayList<Card>()
+                if (inputs.size == number || number == 0) {
+                    for (input in inputs) {
+                        val selector = input.toIntOrNull()
+                        if (selector != null) {
+                            cards.add(cards[selector - 1])
+                        }
+                    }
+                    return pickedCards
+                }
+            }
+        }
+
+    }
+
     fun printGameState(player: Player, supply: Supply) {
         println(
-"""
+            """
 ${getSupplyRepresentation(supply)}
 ${getPlayerRepresentation(player)}
 """
         )
     }
 
-    fun getPlayerRepresentation(player:Player): String {
+    fun getPlayerRepresentation(player: Player): String {
         return """
 === Player ${player.name}::${player.phase::class.java.simpleName} ===
 actions  buys  coins
 =${player.actions}       =${player.buys}    =${player.coins}
 playArea=${arrayToFlatString(player.playArea)}
 hand=${arrayToCommandString(player.hand)}
-commands= -1 -> exit, 0 -> next phase
 === ===
 """
     }
-    fun getSupplyRepresentation(supply:Supply):String {
+
+    fun getSupplyRepresentation(supply: Supply): String {
         var representationString = "=== Supply ===\n"
         for ((code, array) in supply.supplyPiles.entries) {
             representationString += code
