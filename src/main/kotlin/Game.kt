@@ -1,10 +1,12 @@
-import cards.basic.Copper
-import cards.basic.Estate
+import cards.Card
 import commands.Command
 import commands.NextPhase
 import controllers.Controller
 
 class Game(val gameState: GameState, val controller: Controller) {
+    init {
+        gameState.game = this
+    }
     fun start() {
         if (gameState.players.isEmpty()) {
             throw Exception("No players")

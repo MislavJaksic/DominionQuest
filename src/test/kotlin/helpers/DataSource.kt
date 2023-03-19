@@ -42,6 +42,7 @@ class DataSource {
     }
 
     fun getPlayer(
+        gameState: GameState = getGameState(),
         name: String = "cards",
         actions: Int = 0,
         buys: Int = 0,
@@ -51,7 +52,7 @@ class DataSource {
         discardPile: ArrayList<Card> = ArrayList(),
         playArea: ArrayList<Card> = ArrayList()
     ): Player {
-        return Player(name, actions, buys, coins, hand, drawPile, discardPile, playArea)
+        return Player(gameState, name, actions, buys, coins, hand, drawPile, discardPile, playArea)
     }
 
     fun getActionCard(owner: Player = getPlayer(), cost: Int = 0): TestActionCard {

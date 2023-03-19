@@ -4,6 +4,7 @@ import phases.ActionPhase
 import phases.Phase
 
 class Player(
+    val gameState: GameState,
     val name: String,
     var actions: Int,
     var buys: Int,
@@ -47,6 +48,11 @@ class Player(
             return true
         }
         return false
+    }
+
+    fun discard(card:Card) {
+        discardPile.add(hand[hand.indexOf(card)])
+        hand.remove(card)
     }
 
     fun putInHand(card: Card) {
@@ -93,9 +99,5 @@ class Player(
         actions = 1
         buys = 1
         coins = 0
-    }
-
-    override fun toString(): String {
-        return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins, hand=$hand, drawPile=$drawPile, discardPile=$discardPile, playArea=$playArea)"
     }
 }

@@ -18,7 +18,9 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
     }
 
     fun getCopper(): SupplyPile {
-        return SupplyPile(Copper(supplyPlayer), ArrayList<Card>().apply { repeat((60 - playerCount*7)) { add(Copper(supplyPlayer)) } })
+        return SupplyPile(
+            Copper(supplyPlayer),
+            ArrayList<Card>().apply { repeat((60 - playerCount * 7)) { add(Copper(supplyPlayer)) } })
     }
 
     fun getSilver(): SupplyPile {
