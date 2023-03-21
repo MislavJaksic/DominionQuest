@@ -1,16 +1,22 @@
 package controllers
 
+import cards.Card
+import commands.Command
+import commands.TestCommand
 import helpers.DataSource
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class CliControllerTest {
     val dataSource = DataSource()
 
+    val controller = CliController()
+
     val player = dataSource.getPlayer()
 
-    val controller: CliController = CliController()
-
-    val supply = dataSource.getSupply()
+    val supply = player.gameState
 
     val actionCardZero = dataSource.getActionCard(player, 0)
     val actionCardOne = dataSource.getActionCard(player, 1)
@@ -21,162 +27,111 @@ class CliControllerTest {
     fun run() {
     }
 
-    @Test
-    fun getCommandFrom() {
+    @Nested
+    inner class InputToCommand {
+        @Test
+        fun `inputToCommand should throw UsageError if input is null`() {
+            val commands = arrayListOf<Command>(TestCommand("command1"), TestCommand("command2"))
+            assertThatThrownBy { controller.inputToCommand(null, commands) }.hasMessage("Input cannot be null")
+        }
+
+        @Test
+        fun `inputToCommand should throw UsageError if input is not a number`() {
+            val commands = arrayListOf<Command>(TestCommand("command1"), TestCommand("command2"))
+            assertThatThrownBy {
+                controller.inputToCommand(
+                    "not a number",
+                    commands
+                )
+            }.hasMessage("Input must be a number")
+        }
+
+        @Test
+        fun `inputToCommand should throw UsageError if input number is out of range`() {
+            val commands = arrayListOf<Command>(TestCommand("command1"), TestCommand("command2"))
+            assertThatThrownBy { controller.inputToCommand("3", commands) }.hasMessage("Input must be between 1 and 2")
+        }
+
+        @Test
+        fun `inputToCommand should return the correct command for a valid input number`() {
+            val commands = arrayListOf<Command>(TestCommand("command1"), TestCommand("command2"))
+            val expectedCommand = TestCommand("command1")
+            assertThat(controller.inputToCommand("1", commands)).isEqualTo(expectedCommand)
+        }
+
     }
 
-    /*@Nested
-    inner class InputToPlayerCommand {
+    @Nested
+    inner class InputToCards {
         @Test
-        fun surrender() {
-            val command = controller.inputToPlayerCommand("-1", player, supply)
-
-            assertThat(command).isEqualTo(Surrender())
+        fun `inputToCards should throw UsageError if input is null`() {
+            val cards = arrayListOf<Card>(actionCardZero, actionCardOne, treasureCardZero)
+            assertThatThrownBy {
+                controller.inputToCards(null, cards, 2)
+            }.hasMessage("Input cannot be null")
         }
 
         @Test
-        fun nextPhase() {
-            val command = controller.inputToPlayerCommand("0", player, supply)
-
-            assertThat(command).isEqualTo(NextPhase(player, isTurnEnd = false))
+        fun `inputToCards should throw UsageError if not enough cards are selected`() {
+            val cards = arrayListOf<Card>(actionCardZero, actionCardOne, treasureCardZero)
+            assertThatThrownBy {
+                controller.inputToCards("1", cards, 2)
+            }.hasMessage("Select 2 cards not 1")
         }
 
         @Test
-        fun `-2 is bad command`() {
-            val command = controller.inputToPlayerCommand("-2", player, supply)
-
-            assertThat(command).isEqualTo(NullCommand())
+        fun `inputToCards should throw UsageError if too many cards are selected`() {
+            val cards = arrayListOf<Card>(actionCardZero, actionCardOne, treasureCardZero)
+            assertThatThrownBy {
+                controller.inputToCards("1 2 3 4", cards, 3)
+            }.hasMessage("Select 3 cards not 4")
         }
 
         @Test
-        fun `1,1 is bad command`() {
-            val command = controller.inputToPlayerCommand("1,1", player, supply)
-
-            assertThat(command).isEqualTo(NullCommand())
+        fun `inputToCards should throw UsageError if input is not numbers`() {
+            val cards = arrayListOf<Card>(actionCardZero, actionCardOne, treasureCardZero)
+            assertThatThrownBy {
+                controller.inputToCards("1 a", cards, 2)
+            }.hasMessage("All inputs must be numbers")
         }
 
         @Test
-        fun `'m' is bad command`() {
-            val command = controller.inputToPlayerCommand("m", player, supply)
-
-            assertThat(command).isEqualTo(NullCommand())
+        fun `inputToCards should return the correct cards for valid input`() {
+            val cards = arrayListOf<Card>(actionCardZero, actionCardOne, treasureCardZero, treasureCardOne)
+            val expectedCards = arrayListOf<Card>(actionCardZero, treasureCardZero)
+            assertThat(controller.inputToCards("1 3", cards, 2)).isEqualTo(expectedCards)
         }
 
         @Test
-        fun `@ is bad command`() {
-            val command = controller.inputToPlayerCommand("@", player, supply)
-
-            assertThat(command).isEqualTo(NullCommand())
+        fun `inputToCards should return all cards if number is -1`() {
+            val cards = arrayListOf<Card>(actionCardZero, actionCardOne, treasureCardZero, treasureCardOne)
+            assertThat(controller.inputToCards("1 2 3 4", cards, -1)).isEqualTo(cards)
         }
-
-        @Test
-        fun `'' is bad command`() {
-            val command = controller.inputToPlayerCommand("", player, supply)
-
-            assertThat(command).isEqualTo(NullCommand())
-        }
-
-        @Test
-        fun `2 and three card hand is play card`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "2",
-                player = player.apply {
-                    putInHand(treasureCardZero)
-                    putInHand(actionCardZero)
-                    putInHand(treasureCardOne)
-                },
-                command = PlayCard(player, actionCardZero)
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-
-        @Test
-        fun `3 and two card hand is null`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "3",
-                player = player.apply {
-                    putInHand(actionCardZero)
-                    putInHand(actionCardOne)
-                },
-                command = NullCommand()
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-
-        @Test
-        fun `2 and two card hand is play card`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "2",
-                player = player.apply {
-                    putInHand(actionCardZero)
-                    putInHand(actionCardOne)
-
-                },
-                command = PlayCard(player, actionCardOne)
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-
-        @Test
-        fun `1 and two card hand is play card`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "1",
-                player = player.apply {
-                    putInHand(actionCardZero)
-                    putInHand(actionCardOne)
-
-                },
-                command = PlayCard(player, actionCardZero)
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-
-        @Test
-        fun `2 and one card hand is null`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "2",
-                player = player.apply { putInHand(actionCardZero) },
-                command = NullCommand()
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-
-        @Test
-        fun `1 and one card hand is play card`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "1",
-                player = player.apply { putInHand(actionCardZero) },
-                command = PlayCard(player, actionCardZero)
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-
-        @Test
-        fun `1 and empty hand is null`() {
-            val (input, player, command) = dataSource.getInputPlayerCommandTestData(
-                input = "1",
-                command = NullCommand()
-            )
-
-            assertThat(controller.inputToPlayerCommand(input, player, supply)).isEqualTo(command)
-        }
-    }*/
-
-    @Test
-    fun printStateOf() {
     }
 
     @Test
-    fun arrayToFlatString() {
+    fun printGameState() {
     }
 
     @Test
-    fun arrayToCommandString() {
+    fun printCommands() {
     }
+
+    @Test
+    fun getPlayerString() {
+    }
+
+    @Test
+    fun getSupplyString() {
+    }
+
+    @Test
+    fun getCardsToString() {
+    }
+
+    @Test
+    fun getCommandsToString() {
+    }
+
+
 }

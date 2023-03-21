@@ -29,7 +29,7 @@ class CellarTest {
     @Test
     fun execute() {
         val expectedHand = ArrayList<Card>().apply { add(copper) }
-        every { controllerMock.askToPickCards(player.hand, 0) } returns expectedHand
+        every { controllerMock.askToPickCards(player.hand, -1) } returns expectedHand
         card.execute()
 
         assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(silver) })

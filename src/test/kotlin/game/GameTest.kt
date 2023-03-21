@@ -1,7 +1,9 @@
 package game
 
+import commands.Command
 import commands.PassTurn
 import commands.Surrender
+import commands.ToBuyPhase
 import controllers.CliController
 import helpers.DataSource
 import io.mockk.every
@@ -22,6 +24,8 @@ class GameTest {
     val supply = gameState.supply
     val player = onePlayerGame.gameState.players[0]
 
+    val commands = ArrayList<Command>().apply { add(Surrender()) }.apply { add(ToBuyPhase(player)) }
+
     @Nested
     inner class Start {
         @Test
@@ -35,7 +39,7 @@ class GameTest {
         fun `one player exits`() {
             every {
                 controllerMock.askToPickCommand(
-                    onePlayerGame.getAvailableCommands(player),
+                    commands,
                     player,
                     supply
                 )
@@ -50,7 +54,7 @@ class GameTest {
         fun surrender() {
             every {
                 controllerMock.askToPickCommand(
-                    onePlayerGame.getAvailableCommands(player),
+                    commands,
                     player,
                     supply
                 )
@@ -62,7 +66,7 @@ class GameTest {
         fun `end turn`() {
             every {
                 controllerMock.askToPickCommand(
-                    onePlayerGame.getAvailableCommands(player),
+                    commands,
                     player,
                     supply
                 )

@@ -26,6 +26,8 @@ class PlayerTest {
     val treasureCardZero = dataSource.getTreasureCard(player, 0)
     val victoryCardZero = dataSource.getVictoryCard(player, 0, 0)
 
+    val treasureCardFive = dataSource.getTreasureCard(player, 5)
+
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     inner class Play { /* code was not shortened with parameterized tests */
@@ -139,6 +141,41 @@ class PlayerTest {
             assertThat(player.discardPile).isEqualTo(expectedDiscard)
             assertThat(player.coins).isEqualTo(expectedCoins)
             assertThat(player.buys).isEqualTo(expectedBuys)
+        }
+    }
+
+    @Nested
+    inner class IsBuy {
+        @Test
+        fun `test isBuy with buys greater than 0 and enough coins`() {
+            val card = treasureCardFive
+            player.buys = 1
+            player.coins = 6
+            assertThat(player.isBuy(card)).isTrue
+        }
+
+        @Test
+        fun `test isBuy with buys greater than 0 but not enough coins`() {
+            val card = treasureCardFive
+            player.buys = 1
+            player.coins = 4
+            assertThat(player.isBuy(card)).isFalse
+        }
+
+        @Test
+        fun `test isBuy with not enough buys and enough coins`() {
+            val card = treasureCardFive
+            player.buys = 0
+            player.coins = 6
+            assertThat(player.isBuy(card)).isFalse
+        }
+
+        @Test
+        fun `test isBuy with not enough buys and not enough coins`() {
+            val card = treasureCardFive
+            player.buys = 0
+            player.coins = 4
+            assertThat(player.isBuy(card)).isFalse
         }
     }
 

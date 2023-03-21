@@ -6,6 +6,7 @@ import commands.*
 import controllers.Controller
 import phases.ActionPhase
 import phases.BuyPhase
+import kotlin.reflect.KClass
 
 class Game(val gameState: GameState, val controller: Controller) {
     init {
@@ -65,6 +66,17 @@ class Game(val gameState: GameState, val controller: Controller) {
         }
         return commands
     }
+
+    /*fun <T : Any> getPlayCardCommands(player:Player, clazz: KClass<T>):ArrayList<Command> {
+        val commands = ArrayList<Command>()
+        for (card in player.hand) {
+            if (card is clazz::class) {
+                commands.add(PlayCard(player, card))
+            }
+        }
+
+        return commands
+    }*/
 
     override fun toString(): String {
         return "Game()"
