@@ -99,7 +99,7 @@ hand=${getCardsToString(player.hand)}"""
     fun getSupplyString(supply: Supply): String {
         var representationString = "=== Supply ===\n"
         for ((code, array) in supply.supplyPiles.entries) {
-            representationString += code
+            representationString += supply.codeToCard(code)::class.simpleName
             representationString += " -> " + array.size().toString() + ", "
         }
         return representationString

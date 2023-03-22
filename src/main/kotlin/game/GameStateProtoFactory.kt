@@ -39,6 +39,6 @@ class GameStateProtoFactory {
     fun getSupply(gameState: GameState): Supply {
         val supplyPlayer = Player(gameState, "supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
         val factory = SupplyProtoFactory(supplyPlayer, gameState.playerCount)
-        return Supply(factory.getBasicPiles())
+        return Supply(factory.getFirstGame())
     }
 }

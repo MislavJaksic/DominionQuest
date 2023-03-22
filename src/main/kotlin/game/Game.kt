@@ -6,7 +6,6 @@ import commands.*
 import controllers.Controller
 import phases.ActionPhase
 import phases.BuyPhase
-import kotlin.reflect.KClass
 
 class Game(val gameState: GameState, val controller: Controller) {
     init {
@@ -44,39 +43,48 @@ class Game(val gameState: GameState, val controller: Controller) {
         if (player.phase is ActionPhase) {
             commands.add(ToBuyPhase(player))
 
-            for (card in player.hand) {
-                if (card is ActionCard) {
-                    commands.add(PlayCard(player, card))
-                }
-            }
+            commands.addAll(getPlayActionCommans(player))
         } else if (player.phase is BuyPhase) {
             commands.add(PassTurn(player))
 
-            for (card in player.hand) {
-                if (card is TreasureCard) {
-                    commands.add(PlayCard(player, card))
-                }
-            }
+            commands.addAll(getPlayTreasureCommands(player))
 
-            for ((code, pile) in gameState.supply.supplyPiles.entries) {
-                if (player.isBuy(pile.example) && gameState.supply.isCardInSupply(code)) {
-                    commands.add(BuyCard(player, code))
+            commands.addAll(getBuyCardCommands(player))
+        }
+        return commands
+    }
+
+    fun getPlayActionCommans(player: Player): ArrayList<Command> {
+        val commands = ArrayList<Command>()
+        if (player.isAction()) {
+            for (card in player.hand) {
+                if (card is ActionCard) {
+                    commands.add(PlayCard(player, card))
                 }
             }
         }
         return commands
     }
 
-    /*fun <T : Any> getPlayCardCommands(player:Player, clazz: KClass<T>):ArrayList<Command> {
+    fun getPlayTreasureCommands(player: Player): ArrayList<Command> {
         val commands = ArrayList<Command>()
         for (card in player.hand) {
-            if (card is clazz::class) {
+            if (card is TreasureCard) {
                 commands.add(PlayCard(player, card))
             }
         }
-
         return commands
-    }*/
+    }
+
+    fun getBuyCardCommands(player: Player): ArrayList<Command> {
+        val commands = ArrayList<Command>()
+        for ((code, pile) in gameState.supply.supplyPiles.entries) {
+            if (player.isBuy(pile.example) && gameState.supply.isCardInSupply(code)) {
+                commands.add(BuyCard(player, code))
+            }
+        }
+        return commands
+    }
 
     override fun toString(): String {
         return "Game()"

@@ -47,6 +47,13 @@ class Player(
         return false
     }
 
+    fun isAction(): Boolean {
+        if (actions > 0) {
+            return true
+        }
+        return false
+    }
+
     fun discard(card: Card) {
         discardPile.add(hand[hand.indexOf(card)])
         hand.remove(card)
