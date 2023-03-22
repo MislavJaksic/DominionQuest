@@ -19,6 +19,7 @@ class CliController : CliktCommand(), Controller {
     override fun run() {
         val factory = GameStateProtoFactory()
         val gameState = factory.getGameState(playerCount)
+        gameState.controller = this
         val game = Game(gameState, this)
 
         game.start()
@@ -51,7 +52,13 @@ class CliController : CliktCommand(), Controller {
     override fun askToPickCards(cards: ArrayList<Card>, number: Int): ArrayList<Card> {
         println(getCardsToString(cards))
 
-        return prompt("Select up to $number cards:") { inputToCards(it, cards, number) }!!
+        return prompt("Select ${if (number == -1) "any number of" else "up to $number of"} cards:") {
+            inputToCards(
+                it,
+                cards,
+                number
+            )
+        }!!
     }
 
     fun inputToCards(input: String?, cards: ArrayList<Card>, number: Int): ArrayList<Card> {
@@ -62,7 +69,11 @@ class CliController : CliktCommand(), Controller {
                 for (elements in inputs) {
                     val selector = elements.toIntOrNull()
                     if (selector != null) {
-                        pickedCards.add(cards[selector - 1])
+                        if (selector in (1..cards.size)) {
+                            pickedCards.add(cards[selector - 1])
+                        } else {
+                            throw UsageError("Input must be between 1 and ${cards.size}")
+                        }
                     } else {
                         throw UsageError("All inputs must be numbers")
                     }
@@ -98,9 +109,9 @@ hand=${getCardsToString(player.hand)}"""
 
     fun getSupplyString(supply: Supply): String {
         var representationString = "=== Supply ===\n"
-        for ((code, array) in supply.supplyPiles.entries) {
-            representationString += supply.codeToCard(code)::class.simpleName
-            representationString += " -> " + array.size().toString() + ", "
+        for (pile in supply.supplyPiles) {
+            representationString += pile.example::class.simpleName
+            representationString += " -> " + pile.size().toString() + ", "
         }
         return representationString
     }

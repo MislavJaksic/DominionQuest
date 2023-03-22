@@ -1,28 +1,37 @@
 package supplies
 
 import cards.Card
-import enums.SupplyCardCode
 
-data class Supply(val supplyPiles: MutableMap<SupplyCardCode, CardPile>) {
-    fun sell(code: SupplyCardCode): Card {
-        return supplyPiles[code]!!.remove()
+data class Supply(val supplyPiles: ArrayList<CardPile>) {
+    fun sell(card: Card): Card {
+        return cardToPile(card).remove()
     }
 
-    fun codeToCard(code: SupplyCardCode): Card {
-        return supplyPiles[code]!!.example
-    }
-
-    fun isCardInSupply(code: SupplyCardCode): Boolean {
-        if (isCodeInSupply(code)) {
-            if (supplyPiles[code]!!.isNotEmpty()) {
+    fun isCardSold(card: Card): Boolean {
+        if (isCardInSupply(card)) {
+            if (cardToPile(card).isNotEmpty()) {
                 return true
             }
         }
         return false
     }
 
-    fun isCodeInSupply(code: SupplyCardCode): Boolean {
-        return supplyPiles.containsKey(code)
+    fun isCardInSupply(card: Card): Boolean {
+        return try {
+            cardToPile(card)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    fun cardToPile(card: Card): CardPile {
+        for (pile in supplyPiles) {
+            if (pile.example::class == card::class) {
+                return pile
+            }
+        }
+        throw Exception("Card pile does not exist")
     }
 }
 

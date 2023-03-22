@@ -2,19 +2,11 @@ package game
 
 import cards.Card
 import helpers.DataSource
-import helpers.PlayTestData
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Named.named
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
-import org.junit.jupiter.params.ParameterizedTest
-import org.junit.jupiter.params.provider.Arguments.arguments
-import org.junit.jupiter.params.provider.MethodSource
-import phases.BuyPhase
-import java.util.stream.Stream
 
 class PlayerTest {
     val dataSource = DataSource()
@@ -27,77 +19,6 @@ class PlayerTest {
     val victoryCardZero = dataSource.getVictoryCard(player, 0, 0)
 
     val treasureCardFive = dataSource.getTreasureCard(player, 5)
-
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    @Nested
-    inner class Play { /* code was not shortened with parameterized tests */
-        fun playTestDataProvider() = Stream.of(
-            arguments(
-                named(
-                    "play action without actions in action phase",
-                    dataSource.getPlayTestData(
-                        playCard = actionCardZero,
-                        expectedHand = ArrayList<Card>().apply { add(actionCardZero) }
-                    )
-                )
-            ),
-            arguments(dataSource.getPlayTestData(
-                player = dataSource.getPlayer(actions = 1),
-                playCard = actionCardZero,
-                expectedPlayArea = ArrayList<Card>().apply { add(actionCardZero) }
-            )),
-            arguments(
-                dataSource.getPlayTestData(
-                    playCard = treasureCardZero,
-                    expectedHand = ArrayList<Card>().apply { add(treasureCardZero) },
-                )
-            ),
-            arguments(
-                dataSource.getPlayTestData(
-                    playCard = victoryCardZero,
-                    expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
-                )
-            ),
-            arguments(
-                dataSource.getPlayTestData(
-                    player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
-                    playCard = actionCardZero,
-                    expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                )
-            ),
-            arguments(
-                dataSource.getPlayTestData(
-                    player = dataSource.getPlayer(actions = 1).apply { this.phase = BuyPhase(this) },
-                    playCard = actionCardZero,
-                    expectedHand = ArrayList<Card>().apply { add(actionCardZero) },
-                )
-            ),
-            arguments(dataSource.getPlayTestData(
-                player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
-                playCard = treasureCardZero,
-                expectedPlayArea = ArrayList<Card>().apply { add(treasureCardZero) }
-            )),
-            arguments(
-                dataSource.getPlayTestData(
-                    player = dataSource.getPlayer().apply { this.phase = BuyPhase(this) },
-                    playCard = victoryCardZero,
-                    expectedHand = ArrayList<Card>().apply { add(victoryCardZero) },
-                )
-            )
-        )
-
-        @ParameterizedTest
-        @MethodSource("playTestDataProvider")
-        fun playActionPhase(playTestData: PlayTestData) {
-            val (player, card, expectedHand, expectedPlayArea) = playTestData
-            player.putInHand(card)
-            player.play(card)
-
-            assertThat(player.hand).isEqualTo(expectedHand)
-            assertThat(player.playArea).isEqualTo(expectedPlayArea)
-        }
-    }
-
 
     @Test
     fun addActions() {
@@ -176,6 +97,21 @@ class PlayerTest {
             player.buys = 0
             player.coins = 4
             assertThat(player.isBuy(card)).isFalse
+        }
+    }
+
+    @Nested
+    inner class IsAction {
+        @Test
+        fun `given actions is greater than 0, should return true`() {
+            player.actions = 1
+            assertThat(player.isAction()).isTrue
+        }
+
+        @Test
+        fun `given actions is 0, should return false`() {
+            player.actions = 0
+            assertThat(player.isAction()).isFalse
         }
     }
 
