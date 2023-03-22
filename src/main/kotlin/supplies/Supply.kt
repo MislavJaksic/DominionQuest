@@ -3,7 +3,7 @@ package supplies
 import cards.Card
 import enums.SupplyCardCode
 
-class Supply(val supplyPiles: MutableMap<SupplyCardCode, CardPile>) {
+data class Supply(val supplyPiles: MutableMap<SupplyCardCode, CardPile>) {
     fun sell(code: SupplyCardCode): Card {
         return supplyPiles[code]!!.remove()
     }

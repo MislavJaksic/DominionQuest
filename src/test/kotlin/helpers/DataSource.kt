@@ -1,16 +1,14 @@
 package helpers
 
-import GameState
-import GameStateProtoFactory
-import Player
 import cards.Card
 import cards.TestActionCard
 import cards.TestTreasureCard
 import cards.TestVictoryCard
-import commands.Command
-import commands.NextPhase
 import commands.PlayCard
 import enums.SupplyCardCode
+import game.GameState
+import game.GameStateProtoFactory
+import game.Player
 import supplies.CardPile
 import supplies.Supply
 import supplies.SupplyProtoFactory
@@ -84,21 +82,6 @@ class DataSource {
         expectedBuys: Int = 0
     ): BuyTestData {
         return BuyTestData(player, buyCard, expectedDiscard, expectedCoins, expectedBuys)
-    }
-
-    fun getInputPlayerCommandTestData(
-        input: String = "",
-        player: Player = getPlayer(),
-        command: Command?
-    ): InputPlayerCommandTestData {
-        return InputPlayerCommandTestData(input, player, command)
-    }
-
-    fun getNextPhase(
-        player: Player = getPlayer(),
-        isTurnEnd: Boolean = false
-    ): NextPhase {
-        return NextPhase(player, isTurnEnd)
     }
 
     fun getPlayCard(

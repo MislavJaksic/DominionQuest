@@ -1,7 +1,7 @@
 package cards.basic
 
-import Player
 import cards.TreasureCard
+import game.Player
 
 class Gold(override var owner: Player) : TreasureCard {
     override fun execute() {

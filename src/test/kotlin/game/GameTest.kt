@@ -1,5 +1,9 @@
-import commands.NextPhase
+package game
+
+import commands.Command
+import commands.PassTurn
 import commands.Surrender
+import commands.ToBuyPhase
 import controllers.CliController
 import helpers.DataSource
 import io.mockk.every
@@ -20,6 +24,8 @@ class GameTest {
     val supply = gameState.supply
     val player = onePlayerGame.gameState.players[0]
 
+    val commands = ArrayList<Command>().apply { add(Surrender()) }.apply { add(ToBuyPhase(player)) }
+
     @Nested
     inner class Start {
         @Test
@@ -31,7 +37,13 @@ class GameTest {
 
         @Test
         fun `one player exits`() {
-            every { controllerMock.getCommandFrom(player, supply) } returns Surrender()
+            every {
+                controllerMock.askToPickCommand(
+                    commands,
+                    player,
+                    supply
+                )
+            } returns Surrender()
             assertThatThrownBy { onePlayerGame.start() }.hasMessage("Surrender")
         }
     }
@@ -40,19 +52,25 @@ class GameTest {
     inner class TakeTurn {
         @Test
         fun surrender() {
-            every { controllerMock.getCommandFrom(player, supply) } returns Surrender()
+            every {
+                controllerMock.askToPickCommand(
+                    commands,
+                    player,
+                    supply
+                )
+            } returns Surrender()
             assertThatThrownBy { onePlayerGame.takeTurn(player) }.hasMessage("Surrender")
         }
 
         @Test
-        fun `start action phase`() {
-            every { controllerMock.getCommandFrom(player, supply) } returns NextPhase(player, isTurnEnd = false)
-            assertThat(onePlayerGame.takeTurn(player)).isEqualTo(0)
-        }
-
-        @Test
-        fun `pass action and buy phases`() {
-            every { controllerMock.getCommandFrom(player, supply) } returns NextPhase(player, isTurnEnd = true)
+        fun `end turn`() {
+            every {
+                controllerMock.askToPickCommand(
+                    commands,
+                    player,
+                    supply
+                )
+            } returns PassTurn(player)
             assertThat(onePlayerGame.takeTurn(player)).isEqualTo(0)
         }
     }

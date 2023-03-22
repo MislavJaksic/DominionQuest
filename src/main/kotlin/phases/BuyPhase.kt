@@ -1,8 +1,8 @@
 package phases
 
-import Player
 import cards.Card
 import cards.TreasureCard
+import game.Player
 
 data class BuyPhase(override val player: Player) : Phase {
     override fun play(card: Card) {

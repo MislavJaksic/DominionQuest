@@ -1,7 +1,7 @@
 package helpers
 
-import Player
 import cards.Card
+import game.Player
 
 data class BuyTestData(
     val player: Player,

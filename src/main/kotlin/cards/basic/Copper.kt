@@ -1,7 +1,7 @@
 package cards.basic
 
-import Player
 import cards.TreasureCard
+import game.Player
 
 data class Copper(override var owner: Player) : TreasureCard {
 

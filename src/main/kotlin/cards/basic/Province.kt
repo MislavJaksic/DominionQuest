@@ -1,7 +1,7 @@
 package cards.basic
 
-import Player
 import cards.VictoryCard
+import game.Player
 
 class Province(override var owner: Player) : VictoryCard {
     override val points: Int

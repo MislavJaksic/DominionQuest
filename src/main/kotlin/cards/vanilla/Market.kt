@@ -1,7 +1,7 @@
 package cards.vanilla
 
-import Player
 import cards.ActionCard
+import game.Player
 
 class Market(override var owner: Player) : ActionCard {
     override val cost: Int

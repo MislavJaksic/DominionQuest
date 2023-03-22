@@ -1,9 +1,10 @@
 package supplies
 
-import Player
 import cards.Card
 import cards.basic.*
+import cards.vanilla.Cellar
 import enums.SupplyCardCode
+import game.Player
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
     fun getBasicPiles(): MutableMap<SupplyCardCode, CardPile> {
@@ -15,6 +16,12 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
             Pair(SupplyCardCode.DUCHY, getDuchy()),
             Pair(SupplyCardCode.PROVINCE, getProvince()),
         )
+    }
+
+    fun getFirstGame(): MutableMap<SupplyCardCode, CardPile> {
+        val map = getBasicPiles()
+        map.set(SupplyCardCode.FIRST, getCellar())
+        return map
     }
 
     fun getCopper(): SupplyPile {
@@ -47,5 +54,11 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
         return SupplyPile(
             Province(supplyPlayer),
             ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Province(supplyPlayer)) } })
+    }
+
+    fun getCellar(): SupplyPile {
+        return SupplyPile(
+            Cellar(supplyPlayer),
+            ArrayList<Card>().apply { repeat(10) { add(Cellar(supplyPlayer)) } })
     }
 }
