@@ -108,4 +108,26 @@ class Player(
     override fun toString(): String {
         return "Player(name='$name', actions=$actions, buys=$buys, coins=$coins)"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Player
+
+        if (name != other.name) return false
+        if (actions != other.actions) return false
+        if (buys != other.buys) return false
+        if (coins != other.coins) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + actions
+        result = 31 * result + buys
+        result = 31 * result + coins
+        return result
+    }
 }

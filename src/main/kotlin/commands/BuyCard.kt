@@ -1,14 +1,14 @@
 package commands
 
-import enums.SupplyCardCode
+import cards.Card
 import game.Player
 
-data class BuyCard(val player: Player, val code: SupplyCardCode) : Command {
+data class BuyCard(val player: Player, val card: Card) : Command {
     override fun execute() {
-        player.buy(player.gameState.supply.sell(code))
+        player.buy(player.gameState.supply.sell(card))
     }
 
     override fun toString(): String {
-        return "BuyCard($code)"
+        return "Buy_${card::class.simpleName}"
     }
 }

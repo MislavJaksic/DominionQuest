@@ -78,9 +78,9 @@ class Game(val gameState: GameState, val controller: Controller) {
 
     fun getBuyCardCommands(player: Player): ArrayList<Command> {
         val commands = ArrayList<Command>()
-        for ((code, pile) in gameState.supply.supplyPiles.entries) {
-            if (player.isBuy(pile.example) && gameState.supply.isCardInSupply(code)) {
-                commands.add(BuyCard(player, code))
+        for (pile in gameState.supply.supplyPiles) {
+            if (player.isBuy(pile.example) && gameState.supply.isCardSold(pile.example)) {
+                commands.add(BuyCard(player, pile.example))
             }
         }
         return commands

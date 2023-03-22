@@ -10,6 +10,8 @@ data class BuyPhase(override val player: Player) : Phase {
             player.hand.remove(card)
             player.playArea.add(card)
             card.execute()
+        } else {
+            throw Exception("Can only play treasure cards in buy phase")
         }
     }
 }

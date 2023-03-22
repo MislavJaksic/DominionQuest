@@ -5,7 +5,6 @@ import cards.TestActionCard
 import cards.TestTreasureCard
 import cards.TestVictoryCard
 import commands.PlayCard
-import enums.SupplyCardCode
 import game.GameState
 import game.GameStateProtoFactory
 import game.Player
@@ -29,12 +28,12 @@ class DataSource {
 
     fun getBasicSupplyPiles(
 
-    ): MutableMap<SupplyCardCode, CardPile> {
+    ): ArrayList<CardPile> {
         return getSupplyProtoFactory().getBasicPiles()
     }
 
     fun getSupply(
-        supplyPiles: MutableMap<SupplyCardCode, CardPile> = getBasicSupplyPiles()
+        supplyPiles: ArrayList<CardPile> = getBasicSupplyPiles()
     ): Supply {
         return Supply(supplyPiles)
     }

@@ -3,6 +3,7 @@ package commands
 import cards.Card
 import helpers.DataSource
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import phases.BuyPhase
@@ -23,15 +24,6 @@ class PlayCardTest {
     @Nested
     inner class Execute {
         @Test
-        fun `no actions for action in action phase`() {
-            player.putInHand(actionCardZero)
-            dataSource.getPlayCard(player, actionCardZero).execute()
-
-            assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(actionCardZero) })
-            assertThat(player.playArea).isEmpty()
-        }
-
-        @Test
         fun `play action in action phase`() {
             player.putInHand(actionCardZero)
             player.addActions(1)
@@ -44,19 +36,17 @@ class PlayCardTest {
         @Test
         fun `no victory play in action phase`() {
             player.putInHand(victoryCardZero)
-            dataSource.getPlayCard(player, victoryCardZero).execute()
-
-            assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(victoryCardZero) })
-            assertThat(player.playArea).isEmpty()
+            assertThatThrownBy {
+                dataSource.getPlayCard(player, victoryCardZero).execute()
+            }.hasMessage("Can only play action cards in action phase")
         }
 
         @Test
         fun `no treasure play in action phase`() {
             player.putInHand(treasureCardZero)
-            dataSource.getPlayCard(player, treasureCardZero).execute()
-
-            assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(treasureCardZero) })
-            assertThat(player.playArea).isEmpty()
+            assertThatThrownBy {
+                dataSource.getPlayCard(player, victoryCardZero).execute()
+            }.hasMessage("Can only play action cards in action phase")
         }
 
         @Test
@@ -73,31 +63,18 @@ class PlayCardTest {
         fun `no victory play in buy phase`() {
             player.phase = BuyPhase(player)
             player.putInHand(victoryCardZero)
-            dataSource.getPlayCard(player, victoryCardZero).execute()
-
-            assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(victoryCardZero) })
-            assertThat(player.playArea).isEmpty()
+            assertThatThrownBy {
+                dataSource.getPlayCard(player, victoryCardZero).execute()
+            }.hasMessage("Can only play treasure cards in buy phase")
         }
 
         @Test
         fun `no action play in buy phase`() {
             player.phase = BuyPhase(player)
             player.putInHand(actionCardZero)
-            player.addActions(1)
-            dataSource.getPlayCard(player, actionCardZero).execute()
-
-            assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(actionCardZero) })
-            assertThat(player.playArea).isEmpty()
+            assertThatThrownBy {
+                dataSource.getPlayCard(player, actionCardZero).execute()
+            }.hasMessage("Can only play treasure cards in buy phase")
         }
-
-        /*@Test
-        fun `no actions in action phase`() {
-            player.putInHand(actionCardZero)
-            dataSource.getPlayCard(player, actionCardZero).execute()
-
-            assertThat(player.hand).isEmpty()
-            assertThat(player.playArea).isEmpty()
-        }*/
-
     }
 }

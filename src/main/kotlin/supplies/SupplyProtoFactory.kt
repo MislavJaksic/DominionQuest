@@ -3,25 +3,24 @@ package supplies
 import cards.Card
 import cards.basic.*
 import cards.vanilla.Cellar
-import enums.SupplyCardCode
 import game.Player
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
-    fun getBasicPiles(): MutableMap<SupplyCardCode, CardPile> {
-        return mutableMapOf(
-            Pair(SupplyCardCode.COPPER, getCopper()),
-            Pair(SupplyCardCode.SILVER, getSilver()),
-            Pair(SupplyCardCode.GOLD, getGold()),
-            Pair(SupplyCardCode.ESTATE, getEstate()),
-            Pair(SupplyCardCode.DUCHY, getDuchy()),
-            Pair(SupplyCardCode.PROVINCE, getProvince()),
+    fun getBasicPiles(): ArrayList<CardPile> {
+        return arrayListOf(
+            getCopper(),
+            getSilver(),
+            getGold(),
+            getEstate(),
+            getDuchy(),
+            getProvince(),
         )
     }
 
-    fun getFirstGame(): MutableMap<SupplyCardCode, CardPile> {
-        val map = getBasicPiles()
-        map.set(SupplyCardCode.FIRST, getCellar())
-        return map
+    fun getFirstGame(): ArrayList<CardPile> {
+        val list = getBasicPiles()
+        list.add(getCellar())
+        return list
     }
 
     fun getCopper(): SupplyPile {

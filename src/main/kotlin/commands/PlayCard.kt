@@ -9,6 +9,6 @@ data class PlayCard(val player: Player, val card: Card) : Command {
     }
 
     override fun toString(): String {
-        return "PlayCard(card=${card::class.simpleName})"
+        return "Play_${card::class.simpleName}"
     }
 }
