@@ -1,4 +1,4 @@
-package cards.vanilla
+package cards.base_set
 
 import helpers.DataSource
 import org.assertj.core.api.Assertions.assertThat

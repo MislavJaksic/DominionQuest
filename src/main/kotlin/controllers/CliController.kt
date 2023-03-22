@@ -25,14 +25,14 @@ class CliController : CliktCommand(), Controller {
         game.start()
     }
 
-    override fun askToPickCommand(commands: ArrayList<Command>, player: Player, supply: Supply): Command {
+    override fun askToPickCommand(commands: List<Command>, player: Player, supply: Supply): Command {
         printGameState(player, supply)
         printCommands(commands)
 
         return prompt("What do you do?") { inputToCommand(it, commands) }!!
     }
 
-    fun inputToCommand(input: String?, commands: ArrayList<Command>): Command {
+    fun inputToCommand(input: String?, commands: List<Command>): Command {
         if (input != null) {
             val number = input.toIntOrNull()
             if (number != null) {
@@ -49,7 +49,7 @@ class CliController : CliktCommand(), Controller {
     /*
     If number is -1, than the player can pick any number of cards. Otherwise, the player has to pick an exact number of cards
      */
-    override fun askToPickCards(cards: ArrayList<Card>, number: Int): ArrayList<Card> {
+    override fun askToPickCards(cards: List<Card>, number: Int): List<Card> {
         println(getCardsToString(cards))
 
         return prompt("Select ${if (number == -1) "any number of" else "up to $number of"} cards:") {
@@ -61,7 +61,7 @@ class CliController : CliktCommand(), Controller {
         }!!
     }
 
-    fun inputToCards(input: String?, cards: ArrayList<Card>, number: Int): ArrayList<Card> {
+    fun inputToCards(input: String?, cards: List<Card>, number: Int): List<Card> {
         if (input != null) {
             val inputs: List<String> = input.split(" ")
             if (inputs.size == number || number == -1) {
@@ -94,7 +94,7 @@ ${getPlayerString(player)}
         )
     }
 
-    fun printCommands(commands: ArrayList<Command>) {
+    fun printCommands(commands: List<Command>) {
         println(getCommandsToString(commands))
     }
 
@@ -116,7 +116,7 @@ hand=${getCardsToString(player.hand)}"""
         return representationString
     }
 
-    fun getCardsToString(array: ArrayList<Card>): String {
+    fun getCardsToString(array: List<Card>): String {
         var string = ""
         for (item in array) {
             string += ", "
@@ -125,7 +125,7 @@ hand=${getCardsToString(player.hand)}"""
         return string
     }
 
-    fun getCommandsToString(array: ArrayList<Command>): String {
+    fun getCommandsToString(array: List<Command>): String {
         var string = "=== Commands ===\n"
         var count = 1
         for (item in array) {

@@ -7,6 +7,16 @@ data class Supply(val supplyPiles: ArrayList<CardPile>) {
         return cardToPile(card).remove()
     }
 
+    fun getSoldCardsUpToCost(cost: Int): ArrayList<Card> {
+        val cards = ArrayList<Card>()
+        for (pile in supplyPiles) {
+            if (pile.example.cost <= cost && pile.isNotEmpty()) {
+                cards.add(pile.example)
+            }
+        }
+        return cards
+    }
+
     fun isCardSold(card: Card): Boolean {
         if (isCardInSupply(card)) {
             if (cardToPile(card).isNotEmpty()) {

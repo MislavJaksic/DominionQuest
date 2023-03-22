@@ -1,63 +1,38 @@
 package supplies
 
 import cards.Card
+import cards.base_set.Cellar
 import cards.basic.*
-import cards.vanilla.Cellar
 import game.Player
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
     fun getBasicPiles(): ArrayList<CardPile> {
         return arrayListOf(
-            getCopper(),
-            getSilver(),
-            getGold(),
-            getEstate(),
-            getDuchy(),
-            getProvince(),
+            getPileOfCards(Copper(supplyPlayer)),
+            getPileOfCards(Silver(supplyPlayer)),
+            getPileOfCards(Gold(supplyPlayer)),
+            getPileOfCards(Estate(supplyPlayer)),
+            getPileOfCards(Duchy(supplyPlayer)),
+            getPileOfCards(Province(supplyPlayer)),
         )
     }
 
     fun getFirstGame(): ArrayList<CardPile> {
         val list = getBasicPiles()
-        list.add(getCellar())
+        list.add(getPileOfCards(Cellar(supplyPlayer)))
         return list
     }
 
-    fun getCopper(): SupplyPile {
-        return SupplyPile(
-            Copper(supplyPlayer),
-            ArrayList<Card>().apply { repeat((60 - playerCount * 7)) { add(Copper(supplyPlayer)) } })
-    }
-
-    fun getSilver(): SupplyPile {
-        return SupplyPile(Silver(supplyPlayer), ArrayList<Card>().apply { repeat(40) { add(Silver(supplyPlayer)) } })
-    }
-
-    fun getGold(): SupplyPile {
-        return SupplyPile(Gold(supplyPlayer), ArrayList<Card>().apply { repeat(30) { add(Gold(supplyPlayer)) } })
-    }
-
-    fun getEstate(): SupplyPile {
-        return SupplyPile(
-            Estate(supplyPlayer),
-            ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Estate(supplyPlayer)) } })
-    }
-
-    fun getDuchy(): SupplyPile {
-        return SupplyPile(
-            Duchy(supplyPlayer),
-            ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Duchy(supplyPlayer)) } })
-    }
-
-    fun getProvince(): SupplyPile {
-        return SupplyPile(
-            Province(supplyPlayer),
-            ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(Province(supplyPlayer)) } })
-    }
-
-    fun getCellar(): SupplyPile {
-        return SupplyPile(
-            Cellar(supplyPlayer),
-            ArrayList<Card>().apply { repeat(10) { add(Cellar(supplyPlayer)) } })
+    fun getPileOfCards(card: Card): SupplyPile {
+        return when (card) {
+            is Copper -> SupplyPile(card.copy(supplyPlayer),ArrayList<Card>().apply { repeat((60 - playerCount * 7)) { add(card.copy(supplyPlayer)) } })
+            is Silver -> SupplyPile(card.copy(supplyPlayer),ArrayList<Card>().apply { repeat(40) { add(card.copy(supplyPlayer)) } })
+            is Gold -> SupplyPile(card.copy(supplyPlayer),ArrayList<Card>().apply { repeat(30) { add(card.copy(supplyPlayer)) } })
+            is Estate -> SupplyPile(card.copy(supplyPlayer),ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(card.copy(supplyPlayer)) } })
+            is Duchy -> SupplyPile(card.copy(supplyPlayer),ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(card.copy(supplyPlayer)) } })
+            is Province -> SupplyPile(card.copy(supplyPlayer),ArrayList<Card>().apply { repeat(if (playerCount > 2) 12 else 8) { add(card.copy(supplyPlayer)) } })
+            is Cellar -> SupplyPile(card, ArrayList<Card>().apply { repeat(10) { add(card.copy()) } })
+            else -> throw Exception("Card pile creation of $card not specified")
+        }
     }
 }

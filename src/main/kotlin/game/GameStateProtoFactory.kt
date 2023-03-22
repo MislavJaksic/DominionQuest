@@ -1,5 +1,6 @@
 package game
 
+import cards.Card
 import cards.basic.Copper
 import cards.basic.Estate
 import supplies.Supply
@@ -7,7 +8,7 @@ import supplies.SupplyProtoFactory
 
 class GameStateProtoFactory {
     fun getGameState(playerCount: Int): GameState {
-        val gameState = GameState(playerCount)
+        val gameState = GameState(playerCount, ArrayList<Card>())
 
         val players = getPlayers(gameState)
         val supply = getSupply(gameState)
