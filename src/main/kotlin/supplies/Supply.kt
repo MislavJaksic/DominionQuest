@@ -37,7 +37,7 @@ data class Supply(val supplyPiles: ArrayList<CardPile>) {
 
     fun cardToPile(card: Card): CardPile {
         for (pile in supplyPiles) {
-            if (pile.example::class == card::class) {
+            if (pile.example::class.java == card::class.java) {
                 return pile
             }
         }

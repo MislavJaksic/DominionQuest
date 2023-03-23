@@ -16,6 +16,7 @@ class BuyCardTest {
 
     @Test
     fun execute() {
+        print(player.gameState.supply)
         command.execute()
 
         assertThat(player.coins).isEqualTo(0)

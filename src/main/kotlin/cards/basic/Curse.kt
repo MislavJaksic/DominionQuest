@@ -7,5 +7,5 @@ data class Curse(override var owner: Player) : Curse {
     override val points: Int
         get() = -1
     override val cost: Int
-        get() = -1
+        get() = 0
 }

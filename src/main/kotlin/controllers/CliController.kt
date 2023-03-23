@@ -27,9 +27,8 @@ class CliController : CliktCommand(), Controller {
 
     override fun askToPickCommand(commands: List<Command>, player: Player, supply: Supply): Command {
         printGameState(player, supply)
-        printCommands(commands)
 
-        return prompt("What do you do?") { inputToCommand(it, commands) }!!
+        return prompt("${getCommandsToString(commands)}Pick a command:") { inputToCommand(it, commands) }!!
     }
 
     fun inputToCommand(input: String?, commands: List<Command>): Command {
@@ -94,10 +93,6 @@ ${getPlayerString(player)}
         )
     }
 
-    fun printCommands(commands: List<Command>) {
-        println(getCommandsToString(commands))
-    }
-
     fun getPlayerString(player: Player): String {
         return """
 === Player ${player.name}::${player.phase::class.java.simpleName} ===
@@ -126,7 +121,7 @@ hand=${getCardsToString(player.hand)}"""
     }
 
     fun getCommandsToString(array: List<Command>): String {
-        var string = "=== Commands ===\n"
+        var string = "\n=== Commands ===\n"
         var count = 1
         for (item in array) {
             string += ", $count -> "
