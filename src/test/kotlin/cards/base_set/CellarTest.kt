@@ -1,4 +1,4 @@
-package cards.vanilla
+package cards.base_set
 
 import cards.Card
 import cards.basic.Copper

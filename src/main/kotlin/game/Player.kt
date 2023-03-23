@@ -15,6 +15,7 @@ class Player(
     val discardPile: ArrayList<Card>,
     val playArea: ArrayList<Card>
 ) {
+    var isPlayedSilver: Boolean = false
     var phase: Phase = ActionPhase(this)
 
     fun addActions(amount: Int) {
@@ -40,14 +41,14 @@ class Player(
         gain(card)
     }
 
-    fun isBuy(card: Card): Boolean {
+    fun canBuy(card: Card): Boolean {
         if (buys > 0 && (coins >= card.cost)) {
             return true
         }
         return false
     }
 
-    fun isAction(): Boolean {
+    fun canPlayAction(): Boolean {
         if (actions > 0) {
             return true
         }
@@ -56,6 +57,11 @@ class Player(
 
     fun discard(card: Card) {
         discardPile.add(hand[hand.indexOf(card)])
+        hand.remove(card)
+    }
+
+    fun trash(card: Card) {
+        gameState.trash.add(hand[hand.indexOf(card)])
         hand.remove(card)
     }
 

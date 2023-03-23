@@ -72,7 +72,7 @@ class PlayerTest {
             val card = treasureCardFive
             player.buys = 1
             player.coins = 6
-            assertThat(player.isBuy(card)).isTrue
+            assertThat(player.canBuy(card)).isTrue
         }
 
         @Test
@@ -80,7 +80,7 @@ class PlayerTest {
             val card = treasureCardFive
             player.buys = 1
             player.coins = 4
-            assertThat(player.isBuy(card)).isFalse
+            assertThat(player.canBuy(card)).isFalse
         }
 
         @Test
@@ -88,7 +88,7 @@ class PlayerTest {
             val card = treasureCardFive
             player.buys = 0
             player.coins = 6
-            assertThat(player.isBuy(card)).isFalse
+            assertThat(player.canBuy(card)).isFalse
         }
 
         @Test
@@ -96,7 +96,7 @@ class PlayerTest {
             val card = treasureCardFive
             player.buys = 0
             player.coins = 4
-            assertThat(player.isBuy(card)).isFalse
+            assertThat(player.canBuy(card)).isFalse
         }
     }
 
@@ -105,13 +105,13 @@ class PlayerTest {
         @Test
         fun `given actions is greater than 0, should return true`() {
             player.actions = 1
-            assertThat(player.isAction()).isTrue
+            assertThat(player.canPlayAction()).isTrue
         }
 
         @Test
         fun `given actions is 0, should return false`() {
             player.actions = 0
-            assertThat(player.isAction()).isFalse
+            assertThat(player.canPlayAction()).isFalse
         }
     }
 

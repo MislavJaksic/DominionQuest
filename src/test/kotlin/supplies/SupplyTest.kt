@@ -1,7 +1,7 @@
 package supplies
 
+import cards.base_set.Cellar
 import cards.basic.Silver
-import cards.vanilla.Cellar
 import helpers.DataSource
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
