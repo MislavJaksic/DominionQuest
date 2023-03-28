@@ -8,10 +8,6 @@ import phases.ActionPhase
 import phases.BuyPhase
 
 class Game(val gameState: GameState, val controller: Controller) {
-    init {
-        gameState.game = this
-    }
-
     fun start() {
         if (gameState.players.isEmpty()) {
             throw Exception("No players")

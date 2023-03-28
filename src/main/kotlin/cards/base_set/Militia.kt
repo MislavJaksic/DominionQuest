@@ -13,12 +13,12 @@ data class Militia(override var owner: Player) : ActionCard {
         val otherPlayers = owner.gameState.players.filter { it !== owner }
         owner.addCoins(2)
 
-        for (player in otherPlayers) {
-            val mustDiscard: Int = player.hand.size - 3
+        for (otherPlayer in otherPlayers) {
+            val mustDiscard: Int = otherPlayer.hand.size - 3
             if (mustDiscard > 0) {
-                val pickedCards: List<Card> = controller.askToPickCards(player.hand, mustDiscard)
+                val pickedCards: List<Card> = controller.askToPickCards(otherPlayer.hand, mustDiscard)
                 for (card in pickedCards) {
-                    owner.discard(card)
+                    otherPlayer.discard(card)
                 }
             }
         }

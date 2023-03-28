@@ -3,6 +3,7 @@ package supplies
 import cards.Card
 
 data class Supply(val supplyPiles: ArrayList<CardPile>) {
+
     fun sell(card: Card): Card {
         return cardToPile(card).remove()
     }

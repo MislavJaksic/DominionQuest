@@ -108,30 +108,4 @@ class CliControllerTest {
             assertThat(controller.inputToCards("1 2 3 4", cards, -1)).isEqualTo(cards)
         }
     }
-
-    @Test
-    fun printGameState() {
-    }
-
-    @Test
-    fun printCommands() {
-    }
-
-    @Test
-    fun getPlayerString() {
-    }
-
-    @Test
-    fun getSupplyString() {
-    }
-
-    @Test
-    fun getCardsToString() {
-    }
-
-    @Test
-    fun getCommandsToString() {
-    }
-
-
 }

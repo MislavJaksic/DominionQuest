@@ -7,6 +7,5 @@ import supplies.Supply
 data class GameState(val playerCount: Int, val trash: ArrayList<Card>) {
     lateinit var players: ArrayList<Player>
     lateinit var supply: Supply
-    lateinit var game: Game
     lateinit var controller: Controller
 }

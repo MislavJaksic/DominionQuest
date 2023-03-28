@@ -6,7 +6,6 @@ import cards.TestTreasureCard
 import cards.TestVictoryCard
 import commands.PlayCard
 import game.GameState
-import game.GameStateProtoFactory
 import game.Player
 import supplies.CardPile
 import supplies.Supply
@@ -14,9 +13,14 @@ import supplies.SupplyProtoFactory
 
 class DataSource {
     fun getGameState(
-        playerCount: Int = 2
+        playerCount: Int = 2,
+        trash: ArrayList<Card> = ArrayList<Card>(),
     ): GameState {
-        return GameStateProtoFactory().getGameState(playerCount)
+        val gameState = GameState(playerCount, trash)
+        gameState.players = ArrayList<Player>().apply { add(getPlayer(gameState = gameState, name = "first")) }
+            .apply { add(getPlayer(gameState = gameState, name = "second")) }
+        gameState.supply = getSupply(getBasicSupplyPiles(getPlayer(gameState = gameState, name = "supply")))
+        return gameState
     }
 
     fun getSupplyProtoFactory(
@@ -27,20 +31,21 @@ class DataSource {
     }
 
     fun getBasicSupplyPiles(
-
+        supplyPlayer: Player = getPlayer(),
+        playerCount: Int = 2
     ): ArrayList<CardPile> {
-        return getSupplyProtoFactory().getBasicPiles()
+        return getSupplyProtoFactory(supplyPlayer, playerCount).getBasicPiles()
     }
 
     fun getSupply(
-        supplyPiles: ArrayList<CardPile> = getBasicSupplyPiles()
+        supplyPiles: ArrayList<CardPile> = getBasicSupplyPiles(),
     ): Supply {
         return Supply(supplyPiles)
     }
 
     fun getPlayer(
         gameState: GameState = getGameState(),
-        name: String = "cards",
+        name: String = "example",
         actions: Int = 0,
         buys: Int = 0,
         coins: Int = 0,
@@ -62,15 +67,6 @@ class DataSource {
 
     fun getVictoryCard(owner: Player = getPlayer(), cost: Int = 0, points: Int = 0): TestVictoryCard {
         return TestVictoryCard(owner, cost, points)
-    }
-
-    fun getPlayTestData(
-        player: Player = getPlayer(),
-        playCard: Card,
-        expectedHand: ArrayList<Card> = ArrayList(),
-        expectedPlayArea: ArrayList<Card> = ArrayList()
-    ): PlayTestData {
-        return PlayTestData(player, playCard, expectedHand, expectedPlayArea)
     }
 
     fun getBuyTestData(

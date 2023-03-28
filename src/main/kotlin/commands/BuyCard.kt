@@ -9,6 +9,6 @@ data class BuyCard(val player: Player, val card: Card) : Command {
     }
 
     override fun toString(): String {
-        return "Buy_${card::class.simpleName}"
+        return "Buy(${card::class.simpleName})"
     }
 }

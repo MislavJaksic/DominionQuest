@@ -24,10 +24,10 @@ class GameStateProtoFactory {
         for (x in 1..gameState.playerCount) {
             val player = Player(gameState, x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
             for (y: Int in 1..3) {
-                player.drawPile.add(Estate(player))
+                player.gain(Estate(player))
             }
             for (z: Int in 1..7) {
-                player.drawPile.add(Copper(player))
+                player.gain(Copper(player))
             }
             player.shuffleDeck()
             player.cleanup()

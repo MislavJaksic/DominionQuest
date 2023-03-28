@@ -73,8 +73,8 @@ class Player(
         drawPile.add(card)
     }
 
-    fun revealDiscard(): Card {
-        return discardPile.last()
+    fun revealDiscard(): Card? {
+        return discardPile.lastOrNull()
     }
 
     fun play(card: Card) {
