@@ -5,7 +5,6 @@ import phases.ActionPhase
 import phases.Phase
 
 class Player(
-    val gameState: GameState,
     val name: String,
     var actions: Int,
     var buys: Int,
@@ -30,7 +29,7 @@ class Player(
         coins += amount
     }
 
-    fun gain(card: Card) {
+    fun gainToDiscard(card: Card) {
         card.owner = this
         discardPile.add(card)
     }
@@ -38,7 +37,7 @@ class Player(
     fun buy(card: Card) {
         addBuys(-1)
         addCoins(-card.cost)
-        gain(card)
+        gainToDiscard(card)
     }
 
     fun canBuy(card: Card): Boolean {
@@ -55,13 +54,12 @@ class Player(
         return false
     }
 
-    fun discard(card: Card) {
+    fun discardFromHand(card: Card) {
         discardPile.add(hand[hand.indexOf(card)])
         hand.remove(card)
     }
 
-    fun trash(card: Card) {
-        gameState.trash.add(hand[hand.indexOf(card)])
+    fun trashFromHand(card: Card) {
         hand.remove(card)
     }
 
@@ -77,7 +75,7 @@ class Player(
         return discardPile.lastOrNull()
     }
 
-    fun play(card: Card) {
+    fun playFromHandToArea(card: Card) {
         phase.play(card)
     }
 

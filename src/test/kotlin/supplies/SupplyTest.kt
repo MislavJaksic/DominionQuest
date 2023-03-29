@@ -2,22 +2,24 @@ package supplies
 
 import cards.base_set.Cellar
 import cards.basic.Silver
-import helpers.DataSource
+import game.Game
+import helpers.TestBed
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class SupplyTest {
+    val testBed = TestBed()
 
-    val dataSource = DataSource()
+    val gameState = testBed.getGameState()
+    val supply = gameState.supply
+    val supplyPlayer = supply.supplyPiles[0].example.owner
 
-    val supply = dataSource.getSupply()
+    val silver = Silver(supplyPlayer)
 
-    val player = dataSource.getPlayer()
-
-    val silver = Silver(player)
-    val cellar = Cellar(player)
+    val cellar = Cellar(supplyPlayer, gameState)
 
     @Nested
     inner class Sell {

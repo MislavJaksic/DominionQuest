@@ -1,15 +1,15 @@
 package commands
 
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 import phases.BuyPhase
 
 class ToBuyPhaseTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
-    val player = dataSource.getPlayer()
+    val player = testBed.getPlayer()
     val command = ToBuyPhase(player)
 
     @Test

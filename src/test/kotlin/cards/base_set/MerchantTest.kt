@@ -1,20 +1,19 @@
 package cards.base_set
 
 import cards.Card
-import cards.basic.Copper
 import cards.basic.Silver
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class MerchantTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
-    val player = dataSource.getPlayer(actions = 1)
+    val player = testBed.getPlayer(actions = 1)
 
     val card = Merchant(player)
-    val copper = Copper(player)
+    val copper = testBed.getTreasureCard(owner = player)
     val silver = Silver(player)
 
     init {
@@ -25,7 +24,7 @@ class MerchantTest {
     inner class Execute {
         @Test
         fun `add action, draw card without playing silver`() {
-            player.play(card)
+            player.playFromHandToArea(card)
 
             assertThat(player.actions).isEqualTo(1)
             assertThat(player.coins).isEqualTo(0)
@@ -35,7 +34,7 @@ class MerchantTest {
 
         @Test
         fun `play Merchant, then Silver then, add coins`() {
-            player.play(card)
+            player.playFromHandToArea(card)
             silver.execute()
 
             assertThat(player.actions).isEqualTo(1)
@@ -46,7 +45,7 @@ class MerchantTest {
         @Test
         fun `play Silver, then Merchant, then add coins`() {
             silver.execute()
-            player.play(card)
+            player.playFromHandToArea(card)
 
             assertThat(player.actions).isEqualTo(1)
             assertThat(player.coins).isEqualTo(3)

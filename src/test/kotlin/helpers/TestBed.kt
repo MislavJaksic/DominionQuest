@@ -5,33 +5,42 @@ import cards.TestActionCard
 import cards.TestTreasureCard
 import cards.TestVictoryCard
 import commands.PlayCard
+import controllers.CliController
+import game.Game
 import game.GameState
 import game.Player
 import supplies.CardPile
 import supplies.Supply
 import supplies.SupplyProtoFactory
 
-class DataSource {
+class TestBed {
     fun getGameState(
-        playerCount: Int = 2,
-        trash: ArrayList<Card> = ArrayList<Card>(),
+        trash: ArrayList<Card> = ArrayList(),
     ): GameState {
-        val gameState = GameState(playerCount, trash)
-        gameState.players = ArrayList<Player>().apply { add(getPlayer(gameState = gameState, name = "first")) }
-            .apply { add(getPlayer(gameState = gameState, name = "second")) }
-        gameState.supply = getSupply(getBasicSupplyPiles(getPlayer(gameState = gameState, name = "supply")))
+        val gameState = GameState(trash)
+        val players = ArrayList<Player>().apply { add(getPlayer(name = "first")) }
+            .apply { add(getPlayer(name = "second")) }
+        val supply = getSupply(getBasicSupplyPiles(getPlayer(name = "supply"), playerCount = 2))
+
+        val controller = CliController()
+        val game = Game(gameState, controller)
+
+        gameState.game = game
+        gameState.players = players
+        gameState.supply = supply
+
         return gameState
     }
 
     fun getSupplyProtoFactory(
-        supplyPlayer: Player = getPlayer(),
+        supplyPlayer: Player = getPlayer(name = "supply"),
         playerCount: Int = 2
     ): SupplyProtoFactory {
         return SupplyProtoFactory(supplyPlayer, playerCount)
     }
 
     fun getBasicSupplyPiles(
-        supplyPlayer: Player = getPlayer(),
+        supplyPlayer: Player = getPlayer(name = "supply"),
         playerCount: Int = 2
     ): ArrayList<CardPile> {
         return getSupplyProtoFactory(supplyPlayer, playerCount).getBasicPiles()
@@ -44,8 +53,7 @@ class DataSource {
     }
 
     fun getPlayer(
-        gameState: GameState = getGameState(),
-        name: String = "example",
+        name: String = "test",
         actions: Int = 0,
         buys: Int = 0,
         coins: Int = 0,
@@ -54,7 +62,7 @@ class DataSource {
         discardPile: ArrayList<Card> = ArrayList(),
         playArea: ArrayList<Card> = ArrayList()
     ): Player {
-        return Player(gameState, name, actions, buys, coins, hand, drawPile, discardPile, playArea)
+        return Player(name, actions, buys, coins, hand, drawPile, discardPile, playArea)
     }
 
     fun getActionCard(owner: Player = getPlayer(), cost: Int = 0): TestActionCard {

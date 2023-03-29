@@ -3,25 +3,23 @@ package controllers
 import cards.Card
 import commands.Command
 import commands.TestCommand
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class CliControllerTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
     val controller = CliController()
 
-    val player = dataSource.getPlayer()
+    val player = testBed.getPlayer()
 
-    val supply = player.gameState
-
-    val actionCardZero = dataSource.getActionCard(player, 0)
-    val actionCardOne = dataSource.getActionCard(player, 1)
-    val treasureCardZero = dataSource.getTreasureCard(player, 0)
-    val treasureCardOne = dataSource.getTreasureCard(player, 1)
+    val actionCardZero = testBed.getActionCard(player, 0)
+    val actionCardOne = testBed.getActionCard(player, 1)
+    val treasureCardZero = testBed.getTreasureCard(player, 0)
+    val treasureCardOne = testBed.getTreasureCard(player, 1)
 
     @Test
     fun run() {

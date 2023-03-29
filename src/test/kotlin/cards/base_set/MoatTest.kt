@@ -1,13 +1,13 @@
 package cards.base_set
 
-import helpers.DataSource
+import helpers.TestBed
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class MoatTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
-    val player = dataSource.getPlayer()
+    val player = testBed.getPlayer()
 
     val card = Merchant(player)
 

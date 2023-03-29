@@ -3,7 +3,7 @@ package commands
 import cards.Card
 import cards.basic.Copper
 import cards.basic.Silver
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -11,18 +11,18 @@ import phases.ActionPhase
 import phases.BuyPhase
 
 class PassTurnTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
-    val player = dataSource.getPlayer()
+    val player = testBed.getPlayer()
     val command = PassTurn(player)
 
-    val copper = Copper(player)
-    val silver = Silver(player)
+    val smallTreasure = testBed.getTreasureCard(owner = player)
+    val mediumTreasure = testBed.getTreasureCard(owner = player, cost=3)
 
     init {
-        player.putInHand(silver)
+        player.putInHand(mediumTreasure)
 
-        repeat(5) { player.putOnDraw(copper) }
+        repeat(5) { player.putOnDraw(smallTreasure) }
     }
 
     @Test
@@ -34,7 +34,7 @@ class PassTurnTest {
         assertThat(player.coins).isEqualTo(0)
         assertThat(player.actions).isEqualTo(1)
         assertThat(player.buys).isEqualTo(1)
-        assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { repeat(5) { add(copper) } })
-        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(silver) })
+        assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { repeat(5) { add(smallTreasure) } })
+        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(mediumTreasure) })
     }
 }

@@ -21,7 +21,6 @@ class CliController : CliktCommand(), Controller {
     override fun run() {
         val factory = GameStateProtoFactory()
         val gameState = factory.getGameState(playerCount)
-        gameState.controller = this
         val game = Game(gameState, this)
 
         game.start()

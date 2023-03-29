@@ -1,11 +1,11 @@
 package cards.basic
 
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 
 class SilverTest {
-    val player = DataSource().getPlayer()
+    val player = TestBed().getPlayer()
     val card = Silver(player)
 
     @Test

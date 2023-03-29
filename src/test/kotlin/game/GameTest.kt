@@ -5,7 +5,7 @@ import commands.PassTurn
 import commands.Surrender
 import commands.ToBuyPhase
 import controllers.CliController
-import helpers.DataSource
+import helpers.TestBed
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class GameTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
     val controllerMock: CliController = mockk()
 
-    val gameState = dataSource.getGameState(1)
+    val gameState = testBed.getGameState()
     val onePlayerGame = Game(gameState, controllerMock)
 
     val supply = gameState.supply
@@ -30,7 +30,8 @@ class GameTest {
     inner class Start {
         @Test
         fun `zero players`() {
-            val gameState = dataSource.getGameState(0)
+            val gameState = testBed.getGameState()
+            gameState.players = ArrayList()
             val game = Game(gameState, controllerMock)
             assertThatThrownBy { game.start() }.hasMessage("No players")
         }

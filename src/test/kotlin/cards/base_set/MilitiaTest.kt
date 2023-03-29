@@ -3,7 +3,8 @@ package cards.base_set
 import cards.Card
 import cards.basic.Copper
 import controllers.CliController
-import helpers.DataSource
+import game.Game
+import helpers.TestBed
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -11,20 +12,19 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class MilitiaTest {
-    val controllerMock: CliController = mockk()
+    val testBed = TestBed()
+    val gameMock: Game = mockk()
 
-    val dataSource = DataSource()
+    val gameState = testBed.getGameState()
+    val attacker = gameState.players[0]
+    val defender = gameState.players[1]
 
-    val game = dataSource.getGameState()
-    val attacker = game.players[0]
-    val defender = game.players[1]
-
-    val militia = Militia(attacker)
-    val copper = Copper(defender)
+    val militia = Militia(attacker, gameState)
+    val copper = testBed.getTreasureCard(owner = defender)
 
     init {
         defender.hand.apply { repeat(5) { add(copper) } }
-        attacker.gameState.controller = controllerMock
+        gameState.game = gameMock
     }
 
     @Nested
@@ -32,7 +32,7 @@ class MilitiaTest {
         @Test
         fun `make other players discard down to three cards`() {
             val expectedHand = ArrayList<Card>().apply { repeat(3) { add(copper) } }
-            every { controllerMock.askToPickCards(defender.hand, 2) } returns ArrayList<Card>().apply {
+            every { gameMock.askToPickCards(defender.hand, 2) } returns ArrayList<Card>().apply {
                 repeat(2) {
                     add(
                         copper
