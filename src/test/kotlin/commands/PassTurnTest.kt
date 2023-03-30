@@ -35,6 +35,6 @@ class PassTurnTest {
         assertThat(player.actions).isEqualTo(1)
         assertThat(player.buys).isEqualTo(1)
         assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { repeat(5) { add(smallTreasure) } })
-        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(mediumTreasure) })
+        assertThat(player.discardPile).isEqualTo(listOf(mediumTreasure))
     }
 }

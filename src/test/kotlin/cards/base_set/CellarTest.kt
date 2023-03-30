@@ -30,11 +30,11 @@ class CellarTest {
 
     @Test
     fun execute() {
-        val expectedHand = ArrayList<Card>().apply { add(smallTreasure) }
+        val expectedHand = listOf(smallTreasure)
         every { gameMock.askToPickCards(player.hand, -1) } returns expectedHand
         card.execute()
 
-        assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(mediumTreasure) })
+        assertThat(player.hand).isEqualTo(listOf(mediumTreasure))
         assertThat(player.discardPile).isEqualTo(expectedHand)
     }
 

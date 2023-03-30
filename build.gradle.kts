@@ -22,6 +22,14 @@ tasks.test {
     useJUnitPlatform()
 }
 
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
+        attributes["Main-Class"] = application.mainClass
+    }
+    from(configurations.compileClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+}
+
 kotlin {
     jvmToolchain(8)
 }

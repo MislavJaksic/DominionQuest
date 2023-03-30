@@ -28,7 +28,7 @@ class MerchantTest {
 
             assertThat(player.actions).isEqualTo(1)
             assertThat(player.coins).isEqualTo(0)
-            assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(copper) })
+            assertThat(player.hand).isEqualTo(listOf(copper))
             assertThat(player.isPlayedSilver).isFalse
         }
 

@@ -1,6 +1,9 @@
 package cards.base_set
 
+import cards.basic.Copper
 import helpers.TestBed
+import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -9,15 +12,21 @@ class MoatTest {
 
     val player = testBed.getPlayer()
 
-    val card = Merchant(player)
+    val card = Moat(player)
+
+    val copper = Copper(player)
+
+    init {
+        repeat(2) { player.putOnDraw(copper) }
+    }
 
     @Nested
     inner class Execute {
         @Test
-        fun `description of test`() {
-            /*card.execute()
+        fun `draws two cards`() {
+            card.execute()
 
-            Assertions.assertThat(player).isEqualTo()*/
+            assertThat(player.hand).isEqualTo(listOf(copper,copper))
         }
     }
 }

@@ -4,30 +4,31 @@ import cards.basic.Copper
 import helpers.TestBed
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
-class VillageTest {
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Nested
+
+class SmithyTest {
     val testBed = TestBed()
 
     val player = testBed.getPlayer()
 
-    val card = Village(player)
+    val card = Smithy(player)
 
     val copper = Copper(player)
 
     init {
-        repeat(1) { player.putOnDraw(copper) }
+        repeat(3) { player.putOnDraw(copper) }
     }
 
     @Nested
     inner class Execute {
         @Test
-        fun `draws two cards`() {
+        fun `draws three cards`() {
             card.execute()
 
-            assertThat(player.actions).isEqualTo(2)
-            assertThat(player.hand).isEqualTo(listOf(copper))
+            assertThat(player.hand).isEqualTo(listOf(copper,copper, copper))
         }
     }
 }

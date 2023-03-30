@@ -55,7 +55,7 @@ class PlayerTest {
             val (player, card, expectedDiscard, expectedCoins, expectedBuys) = testBed.getBuyTestData(
                 player = testBed.getPlayer(buys = 1, coins = 1),
                 buyCard = actionCardOne,
-                expectedDiscard = ArrayList<Card>().apply { add(actionCardOne) }
+                expectedDiscard = listOf(actionCardOne)
             )
             player.buy(card)
 
@@ -203,7 +203,7 @@ class PlayerTest {
 
         player.discardFromHand(treasureCardZero)
 
-        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(treasureCardZero) })
+        assertThat(player.discardPile).isEqualTo(listOf(treasureCardZero))
         assertThat(player.hand).isEqualTo(ArrayList<Card>())
     }
 }

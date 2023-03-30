@@ -10,4 +10,8 @@ data class PlayAllTreasures(val player: Player) : Command {
             player.playFromHandToArea(card)
         }
     }
+
+    override fun toString(): String {
+        return "PlayAllTreasures()"
+    }
 }

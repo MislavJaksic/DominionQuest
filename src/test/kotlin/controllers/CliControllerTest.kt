@@ -21,10 +21,6 @@ class CliControllerTest {
     val treasureCardZero = testBed.getTreasureCard(player, 0)
     val treasureCardOne = testBed.getTreasureCard(player, 1)
 
-    @Test
-    fun run() {
-    }
-
     @Nested
     inner class InputToCommand {
         @Test

@@ -30,7 +30,7 @@ class PlayCardTest {
             testBed.getPlayCard(player, actionCardZero).execute()
 
             assertThat(player.hand).isEmpty()
-            assertThat(player.playArea).isEqualTo(ArrayList<Card>().apply { add(actionCardZero) })
+            assertThat(player.playArea).isEqualTo(listOf(actionCardZero))
         }
 
         @Test
@@ -56,7 +56,7 @@ class PlayCardTest {
             testBed.getPlayCard(player, treasureCardZero).execute()
 
             assertThat(player.hand).isEmpty()
-            assertThat(player.playArea).isEqualTo(ArrayList<Card>().apply { add(treasureCardZero) })
+            assertThat(player.playArea).isEqualTo(listOf(treasureCardZero))
         }
 
         @Test

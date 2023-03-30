@@ -26,7 +26,7 @@ class BuyCardTest {
 
         assertThat(player.coins).isEqualTo(0)
         assertThat(player.buys).isEqualTo(0)
-        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(silver) })
+        assertThat(player.discardPile).isEqualTo(listOf(silver))
         assertThat(gameState.supply.cardToPile(silver).size()).isEqualTo(39)
     }
 

@@ -80,7 +80,7 @@ class TestBed {
     fun getBuyTestData(
         player: Player = getPlayer(),
         buyCard: Card,
-        expectedDiscard: ArrayList<Card> = ArrayList(),
+        expectedDiscard: List<Card> = ArrayList(),
         expectedCoins: Int = 0,
         expectedBuys: Int = 0
     ): BuyTestData {
