@@ -5,10 +5,10 @@ import game.Player
 
 data class PlayCard(val player: Player, val card: Card) : Command {
     override fun execute() {
-        player.play(card)
+        player.playFromHandToArea(card)
     }
 
     override fun toString(): String {
-        return "Play_${card::class.simpleName}"
+        return "Play(${card::class.simpleName})"
     }
 }

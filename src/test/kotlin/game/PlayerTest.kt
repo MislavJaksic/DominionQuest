@@ -1,7 +1,7 @@
 package game
 
 import cards.Card
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -9,16 +9,16 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class PlayerTest {
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
-    val player = dataSource.getPlayer()
+    val player = testBed.getPlayer()
 
-    val actionCardZero = dataSource.getActionCard(player, 0)
-    val actionCardOne = dataSource.getActionCard(player, 1)
-    val treasureCardZero = dataSource.getTreasureCard(player, 0)
-    val victoryCardZero = dataSource.getVictoryCard(player, 0, 0)
+    val actionCardZero = testBed.getActionCard(player, 0)
+    val actionCardOne = testBed.getActionCard(player, 1)
+    val treasureCardZero = testBed.getTreasureCard(player, 0)
+    val victoryCardZero = testBed.getVictoryCard(player, 0, 0)
 
-    val treasureCardFive = dataSource.getTreasureCard(player, 5)
+    val treasureCardFive = testBed.getTreasureCard(player, 5)
 
     @Test
     fun addActions() {
@@ -43,8 +43,8 @@ class PlayerTest {
 
     @Test
     fun gain() {
-        player.gain(actionCardZero)
-        player.gain(actionCardOne)
+        player.gainToDiscard(actionCardZero)
+        player.gainToDiscard(actionCardOne)
         assertEquals(actionCardOne, player.revealDiscard())
     }
 
@@ -52,10 +52,10 @@ class PlayerTest {
     inner class Buy {
         @Test
         fun `enough coins and buys`() {
-            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = dataSource.getBuyTestData(
-                player = dataSource.getPlayer(buys = 1, coins = 1),
+            val (player, card, expectedDiscard, expectedCoins, expectedBuys) = testBed.getBuyTestData(
+                player = testBed.getPlayer(buys = 1, coins = 1),
                 buyCard = actionCardOne,
-                expectedDiscard = ArrayList<Card>().apply { add(actionCardOne) }
+                expectedDiscard = listOf(actionCardOne)
             )
             player.buy(card)
 
@@ -139,7 +139,7 @@ class PlayerTest {
 
         @Test
         fun drawDrawPileEmpty() {
-            player.gain(actionCardZero)
+            player.gainToDiscard(actionCardZero)
             player.draw(1)
 
             assertEquals(actionCardZero, player.hand[0])
@@ -150,7 +150,7 @@ class PlayerTest {
         @Test
         fun drawThenShuffleThenDrawAgain() {
             player.putOnDraw(actionCardZero)
-            player.gain(actionCardOne)
+            player.gainToDiscard(actionCardOne)
             player.draw(2)
 
             assertEquals(actionCardZero, player.hand[0])
@@ -162,7 +162,7 @@ class PlayerTest {
 
     @Test
     fun shuffleDeck() {
-        player.gain(actionCardZero)
+        player.gainToDiscard(actionCardZero)
 
         player.shuffleDeck()
         assertEquals(actionCardZero, player.drawPile[0])
@@ -182,7 +182,7 @@ class PlayerTest {
         fun `cleanup played cards`() {
             player.putInHand(actionCardZero)
             player.addActions(1)
-            player.play(actionCardZero)
+            player.playFromHandToArea(actionCardZero)
 
             player.cleanup()
             assertEquals(actionCardZero, player.hand[0])
@@ -201,9 +201,9 @@ class PlayerTest {
     fun discard() {
         player.putInHand(treasureCardZero)
 
-        player.discard(treasureCardZero)
+        player.discardFromHand(treasureCardZero)
 
-        assertThat(player.discardPile).isEqualTo(ArrayList<Card>().apply { add(treasureCardZero) })
+        assertThat(player.discardPile).isEqualTo(listOf(treasureCardZero))
         assertThat(player.hand).isEqualTo(ArrayList<Card>())
     }
 }

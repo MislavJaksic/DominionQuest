@@ -1,11 +1,11 @@
 package cards.base_set
 
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class MarketTest {
-    val player = DataSource().getPlayer()
+    val player = TestBed().getPlayer()
     val card = Market(player)
 
     @Test

@@ -1,7 +1,7 @@
 package commands
 
 import cards.Card
-import helpers.DataSource
+import helpers.TestBed
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Nested
@@ -10,16 +10,16 @@ import phases.BuyPhase
 
 class PlayCardTest {
 
-    val dataSource = DataSource()
+    val testBed = TestBed()
 
-    val player = dataSource.getPlayer()
+    val player = testBed.getPlayer()
 
-    val actionCardZero = dataSource.getActionCard(player, 0)
-    val actionCardOne = dataSource.getActionCard(player, 1)
-    val treasureCardZero = dataSource.getTreasureCard(player, 0)
-    val treasureCardOne = dataSource.getTreasureCard(player, 1)
-    val victoryCardZero = dataSource.getVictoryCard(player, 0, 0)
-    val victoryCardOne = dataSource.getVictoryCard(player, 1, 1)
+    val actionCardZero = testBed.getActionCard(player, 0)
+    val actionCardOne = testBed.getActionCard(player, 1)
+    val treasureCardZero = testBed.getTreasureCard(player, 0)
+    val treasureCardOne = testBed.getTreasureCard(player, 1)
+    val victoryCardZero = testBed.getVictoryCard(player, 0, 0)
+    val victoryCardOne = testBed.getVictoryCard(player, 1, 1)
 
     @Nested
     inner class Execute {
@@ -27,17 +27,17 @@ class PlayCardTest {
         fun `play action in action phase`() {
             player.putInHand(actionCardZero)
             player.addActions(1)
-            dataSource.getPlayCard(player, actionCardZero).execute()
+            testBed.getPlayCard(player, actionCardZero).execute()
 
             assertThat(player.hand).isEmpty()
-            assertThat(player.playArea).isEqualTo(ArrayList<Card>().apply { add(actionCardZero) })
+            assertThat(player.playArea).isEqualTo(listOf(actionCardZero))
         }
 
         @Test
         fun `no victory play in action phase`() {
             player.putInHand(victoryCardZero)
             assertThatThrownBy {
-                dataSource.getPlayCard(player, victoryCardZero).execute()
+                testBed.getPlayCard(player, victoryCardZero).execute()
             }.hasMessage("Can only play action cards in action phase")
         }
 
@@ -45,7 +45,7 @@ class PlayCardTest {
         fun `no treasure play in action phase`() {
             player.putInHand(treasureCardZero)
             assertThatThrownBy {
-                dataSource.getPlayCard(player, victoryCardZero).execute()
+                testBed.getPlayCard(player, victoryCardZero).execute()
             }.hasMessage("Can only play action cards in action phase")
         }
 
@@ -53,10 +53,10 @@ class PlayCardTest {
         fun `play treasure in buy phase`() {
             player.phase = BuyPhase(player)
             player.putInHand(treasureCardZero)
-            dataSource.getPlayCard(player, treasureCardZero).execute()
+            testBed.getPlayCard(player, treasureCardZero).execute()
 
             assertThat(player.hand).isEmpty()
-            assertThat(player.playArea).isEqualTo(ArrayList<Card>().apply { add(treasureCardZero) })
+            assertThat(player.playArea).isEqualTo(listOf(treasureCardZero))
         }
 
         @Test
@@ -64,7 +64,7 @@ class PlayCardTest {
             player.phase = BuyPhase(player)
             player.putInHand(victoryCardZero)
             assertThatThrownBy {
-                dataSource.getPlayCard(player, victoryCardZero).execute()
+                testBed.getPlayCard(player, victoryCardZero).execute()
             }.hasMessage("Can only play treasure cards in buy phase")
         }
 
@@ -73,7 +73,7 @@ class PlayCardTest {
             player.phase = BuyPhase(player)
             player.putInHand(actionCardZero)
             assertThatThrownBy {
-                dataSource.getPlayCard(player, actionCardZero).execute()
+                testBed.getPlayCard(player, actionCardZero).execute()
             }.hasMessage("Can only play treasure cards in buy phase")
         }
     }

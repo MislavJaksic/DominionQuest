@@ -1,38 +1,40 @@
 package cards.base_set
 
 import cards.Card
-import cards.basic.Copper
 import cards.basic.Silver
-import controllers.CliController
-import helpers.DataSource
+import game.Game
+import helpers.TestBed
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class CellarTest {
-    val controllerMock: CliController = mockk()
+    val testBed = TestBed()
+    val gameMock: Game = mockk()
+    
+    val gameState = testBed.getGameState()
+    val player = gameState.players[0]
+    
+    val smallTreasure = testBed.getTreasureCard(owner = player)
+    val mediumTreasure = testBed.getTreasureCard(owner = player, cost=3)
 
-
-    val player = DataSource().getPlayer(actions = 1)
-    val copper = Copper(player)
-    val silver = Silver(player)
-    val card = Cellar(player)
+    val card = Cellar(player, gameState)
 
     init {
-        player.putInHand(copper)
-        player.putOnDraw(silver)
+        player.putInHand(smallTreasure)
+        player.putOnDraw(mediumTreasure)
 
-        player.gameState.controller = controllerMock
+        gameState.game = gameMock
     }
 
     @Test
     fun execute() {
-        val expectedHand = ArrayList<Card>().apply { add(copper) }
-        every { controllerMock.askToPickCards(player.hand, -1) } returns expectedHand
+        val expectedHand = listOf(smallTreasure)
+        every { gameMock.askToPickCards(player.hand, -1) } returns expectedHand
         card.execute()
 
-        assertThat(player.hand).isEqualTo(ArrayList<Card>().apply { add(silver) })
+        assertThat(player.hand).isEqualTo(listOf(mediumTreasure))
         assertThat(player.discardPile).isEqualTo(expectedHand)
     }
 

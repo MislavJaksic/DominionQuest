@@ -3,6 +3,7 @@ package supplies
 import cards.Card
 import cards.base_set.*
 import cards.basic.*
+import game.GameState
 import game.Player
 
 class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
@@ -11,25 +12,26 @@ class SupplyProtoFactory(val supplyPlayer: Player, val playerCount: Int) {
             getPileOfCards(Copper(supplyPlayer)),
             getPileOfCards(Silver(supplyPlayer)),
             getPileOfCards(Gold(supplyPlayer)),
+
             getPileOfCards(Estate(supplyPlayer)),
             getPileOfCards(Duchy(supplyPlayer)),
             getPileOfCards(Province(supplyPlayer)),
         )
     }
 
-    fun getFirstGame(): ArrayList<CardPile> {
+    fun getFirstGame(gameState: GameState): ArrayList<CardPile> {
         val list = getBasicPiles()
-        list.add(getPileOfCards(Cellar(supplyPlayer)))
-        list.add(getPileOfCards(Market(supplyPlayer)))
-        list.add(getPileOfCards(Merchant(supplyPlayer)))
-        list.add(getPileOfCards(Militia(supplyPlayer)))
-        list.add(getPileOfCards(Mine(supplyPlayer)))
-
+        list.add(getPileOfCards(Cellar(supplyPlayer,gameState)))
         list.add(getPileOfCards(Moat(supplyPlayer)))
-        list.add(getPileOfCards(Remodel(supplyPlayer)))
-        list.add(getPileOfCards(Smithy(supplyPlayer)))
+        list.add(getPileOfCards(Merchant(supplyPlayer)))
         list.add(getPileOfCards(Village(supplyPlayer)))
-        list.add(getPileOfCards(Workshop(supplyPlayer)))
+        list.add(getPileOfCards(Workshop(supplyPlayer,gameState)))
+
+        list.add(getPileOfCards(Remodel(supplyPlayer,gameState)))
+        list.add(getPileOfCards(Smithy(supplyPlayer)))
+        list.add(getPileOfCards(Militia(supplyPlayer,gameState)))
+        list.add(getPileOfCards(Market(supplyPlayer)))
+        list.add(getPileOfCards(Mine(supplyPlayer,gameState)))
         return list
     }
 

@@ -8,10 +8,11 @@ import supplies.SupplyProtoFactory
 
 class GameStateProtoFactory {
     fun getGameState(playerCount: Int): GameState {
-        val gameState = GameState(playerCount, ArrayList<Card>())
+        val trash = ArrayList<Card>()
+        val gameState = GameState(trash)
 
-        val players = getPlayers(gameState)
-        val supply = getSupply(gameState)
+        val players = getPlayers(playerCount)
+        val supply = getSupply(playerCount,gameState)
 
         gameState.players = players
         gameState.supply = supply
@@ -19,15 +20,15 @@ class GameStateProtoFactory {
         return gameState
     }
 
-    fun getPlayers(gameState: GameState): ArrayList<Player> {
+    fun getPlayers(playerCount: Int): ArrayList<Player> {
         val players = ArrayList<Player>()
-        for (x in 1..gameState.playerCount) {
-            val player = Player(gameState, x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
+        for (x in 1..playerCount) {
+            val player = Player(x.toString(), 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
             for (y: Int in 1..3) {
-                player.drawPile.add(Estate(player))
+                player.gainToDiscard(Estate(player))
             }
             for (z: Int in 1..7) {
-                player.drawPile.add(Copper(player))
+                player.gainToDiscard(Copper(player))
             }
             player.shuffleDeck()
             player.cleanup()
@@ -37,9 +38,9 @@ class GameStateProtoFactory {
         return players
     }
 
-    fun getSupply(gameState: GameState): Supply {
-        val supplyPlayer = Player(gameState, "supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
-        val factory = SupplyProtoFactory(supplyPlayer, gameState.playerCount)
-        return Supply(factory.getFirstGame())
+    fun getSupply(playerCount: Int, gameState: GameState): Supply {
+        val supplyPlayer = Player("supply", 0, 0, 0, ArrayList(), ArrayList(), ArrayList(), ArrayList())
+        val factory = SupplyProtoFactory(supplyPlayer, playerCount)
+        return Supply(factory.getFirstGame(gameState))
     }
 }
